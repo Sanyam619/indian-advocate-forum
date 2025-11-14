@@ -2,6 +2,7 @@ import AdvocateProfileForm from '../components/auth/AdvocateProfileForm';
 import { withPageAuthRequired, getSession } from '@auth0/nextjs-auth0';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
+import prisma from '../lib/prisma';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -24,8 +25,6 @@ const commonPracticeAreas = [
 
 export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
   async getServerSideProps({ req, res }) {
-    const prisma = (await import('../lib/prisma')).default;
-    
     const session = await getSession(req, res);
     if (!session?.user) {
       return {
