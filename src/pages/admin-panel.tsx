@@ -62,27 +62,26 @@ interface AdminPanelProps {
     email: string;
     fullName: string;
     role: string;
-  };
+  } | null;
 }
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   try {
+    // Skip during build time
+    if (!process.env.DATABASE_URL) {
+      return {
+        props: {
+          adminUser: null,
+        },
+      };
+    }
+
     const session = await getSession(req, res);
     
     if (!session?.user) {
       return {
         redirect: {
           destination: '/auth',
-          permanent: false,
-        },
-      };
-    }
-
-    // Skip database check if DATABASE_URL is not available (build time)
-    if (!process.env.DATABASE_URL) {
-      return {
-        redirect: {
-          destination: '/?error=server_error',
           permanent: false,
         },
       };
@@ -135,6 +134,19 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
 
 export default function AdminPanel({ adminUser }: AdminPanelProps) {
   const router = useRouter();
+  
+  // Redirect if no admin user (build time scenario)
+  useEffect(() => {
+    if (!adminUser) {
+      router.push('/');
+    }
+  }, [adminUser, router]);
+
+  // Don't render anything if no admin user
+  if (!adminUser) {
+    return null;
+  }
+
   const [userEmail, setUserEmail] = useState('');
   const [removeEmail, setRemoveEmail] = useState('');
   const [users, setUsers] = useState<User[]>([]);
