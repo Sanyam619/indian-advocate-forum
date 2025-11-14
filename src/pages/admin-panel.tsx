@@ -67,7 +67,7 @@ interface AdminPanelProps {
 
 export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   try {
-    // Skip during build time
+    // Skip during build time - return empty props
     if (!process.env.DATABASE_URL) {
       return {
         props: {
@@ -76,7 +76,18 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       };
     }
 
-    const session = await getSession(req, res);
+    // Get session
+    let session;
+    try {
+      session = await getSession(req, res);
+    } catch (sessionError) {
+      console.error('Session error:', sessionError);
+      return {
+        props: {
+          adminUser: null,
+        },
+      };
+    }
     
     if (!session?.user) {
       return {
@@ -88,15 +99,25 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     }
 
     // Check if user exists in database and is an admin
-    const user = await prisma.user.findUnique({
-      where: { auth0Id: session.user.sub },
-      select: {
-        id: true,
-        email: true,
-        fullName: true,
-        role: true,
-      },
-    });
+    let user;
+    try {
+      user = await prisma.user.findUnique({
+        where: { auth0Id: session.user.sub },
+        select: {
+          id: true,
+          email: true,
+          fullName: true,
+          role: true,
+        },
+      });
+    } catch (dbError) {
+      console.error('Database error:', dbError);
+      return {
+        props: {
+          adminUser: null,
+        },
+      };
+    }
 
     if (!user || user.role !== 'ADMIN') {
       // Not an admin - redirect to access denied or home
@@ -118,15 +139,11 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       },
     };
   } catch (error) {
-    console.error('Error checking admin access:', error);
-    // During build, return minimal props instead of redirecting
+    console.error('Error in getServerSideProps:', error);
+    // Return null props on any error
     return {
       props: {
-        adminUser: {
-          email: 'build@time.com',
-          fullName: 'Build Time',
-          role: 'USER',
-        },
+        adminUser: null,
       },
     };
   }
