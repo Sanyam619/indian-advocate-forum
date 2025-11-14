@@ -38,13 +38,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     // Filter by city - case insensitive comparison
-    const filteredAdvocates = advocates.filter(advocate => {
+    const filteredAdvocates = advocates.filter((advocate: typeof advocates[0]) => {
       if (!advocate.city) return false; // Exclude advocates without city
       return advocate.city.toLowerCase() === city.toLowerCase();
     });
 
     // Transform the data to ensure consistent formatting
-    const formattedAdvocates = filteredAdvocates.map(advocate => ({
+    const formattedAdvocates = filteredAdvocates.map((advocate: typeof advocates[0]) => ({
       ...advocate,
       yearsOfExperience: advocate.yearsOfExperience || '0',
       specialization: advocate.specialization || 'General Practice',
