@@ -36,9 +36,9 @@ export default async function listUsers(req: NextApiRequest, res: NextApiRespons
 
     // Group users by role for easier viewing
     const usersByRole = {
-      ADMIN: users.filter(u => u.role === 'ADMIN'),
-      ADVOCATE: users.filter(u => u.role === 'ADVOCATE'),
-      USER: users.filter(u => u.role === 'USER')
+      ADMIN: users.filter((u: typeof users[0]) => u.role === 'ADMIN'),
+      ADVOCATE: users.filter((u: typeof users[0]) => u.role === 'ADVOCATE'),
+      USER: users.filter((u: typeof users[0]) => u.role === 'USER')
     };
 
     return res.status(200).json({ 
