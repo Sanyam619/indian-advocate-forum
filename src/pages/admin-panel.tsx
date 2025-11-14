@@ -6,7 +6,6 @@ import { getSession } from '@auth0/nextjs-auth0';
 import Head from 'next/head';
 import Layout from '@/components/Layout';
 import NewsVideoUploadForm from '@/components/news/NewsVideoUploadForm';
-import prisma from '@/lib/prisma';
 
 interface User {
   id: string;
@@ -101,6 +100,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
     // Check if user exists in database and is an admin
     let user;
     try {
+      // Import prisma only when needed (not at build time)
+      const prisma = (await import('@/lib/prisma')).default;
+      
       user = await prisma.user.findUnique({
         where: { auth0Id: session.user.sub },
         select: {
