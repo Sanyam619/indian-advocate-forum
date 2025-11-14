@@ -78,6 +78,16 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       };
     }
 
+    // Skip database check if DATABASE_URL is not available (build time)
+    if (!process.env.DATABASE_URL) {
+      return {
+        redirect: {
+          destination: '/?error=server_error',
+          permanent: false,
+        },
+      };
+    }
+
     // Check if user exists in database and is an admin
     const user = await prisma.user.findUnique({
       where: { auth0Id: session.user.sub },
