@@ -209,7 +209,7 @@ export default function Signup() {
       }
 
       // Account created - redirect to login
-      window.location.href = '/api/auth/login?returnTo=/news';
+      window.location.href = '/api/auth/login?returnTo=/home';
     } catch (err: any) {
       setError(err.message || 'Account creation failed');
       setLoading(false);
@@ -239,7 +239,7 @@ export default function Signup() {
 
       // Account created successfully - redirect to Auth0 login
       // User will need to login with their email and password
-      window.location.href = '/api/auth/login?returnTo=/news';
+      window.location.href = '/api/auth/login?returnTo=/home';
     } catch (err: any) {
       setError(err.message || 'Account creation failed');
       setLoading(false);
