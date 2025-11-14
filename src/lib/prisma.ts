@@ -1,11 +1,13 @@
 import { PrismaClient } from '@prisma/client'
 
 // Function to get validated DATABASE_URL
-function getDatabaseUrl(): string {
+function getDatabaseUrl(): string | undefined {
   const dbUrl = process.env.DATABASE_URL
   
   if (!dbUrl) {
-    throw new Error('DATABASE_URL environment variable is not set')
+    // During build time, return undefined to skip Prisma initialization
+    console.warn('DATABASE_URL not set - Prisma client will not be initialized')
+    return undefined
   }
 
   // Validate the URL format and extract database name
@@ -14,7 +16,8 @@ function getDatabaseUrl(): string {
     const pathname = url.pathname.slice(1) // Remove leading slash
     
     if (!pathname || pathname.trim() === '') {
-      throw new Error(`Invalid DATABASE_URL: database name is empty. URL: ${dbUrl}`)
+      console.warn(`Invalid DATABASE_URL: database name is empty`)
+      return undefined
     }
     
     // Only log in development to reduce console noise
@@ -23,7 +26,8 @@ function getDatabaseUrl(): string {
     }
     return dbUrl
   } catch (error) {
-    throw new Error(`Invalid DATABASE_URL format: ${(error as Error).message}`)
+    console.error(`Invalid DATABASE_URL format: ${(error as Error).message}`)
+    return undefined
   }
 }
 
@@ -31,20 +35,26 @@ function getDatabaseUrl(): string {
 // exhausting your database connection limit.
 const globalForPrisma = globalThis as unknown as { prisma: PrismaClient | undefined }
 
-export const prisma = globalForPrisma.prisma ?? new PrismaClient({
-  log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'], // Reduced logging
-  datasources: {
-    db: {
-      url: getDatabaseUrl()
-    }
-  }
-})
+const databaseUrl = getDatabaseUrl()
 
-// Graceful shutdown
-process.on('beforeExit', async () => {
-  await prisma.$disconnect()
-})
+export const prisma = databaseUrl 
+  ? (globalForPrisma.prisma ?? new PrismaClient({
+      log: process.env.NODE_ENV === 'development' ? ['error', 'warn'] : ['error'],
+      datasources: {
+        db: {
+          url: databaseUrl
+        }
+      }
+    }))
+  : null as any // Return null if no database URL (build time)
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma
+// Graceful shutdown - only if prisma is initialized
+if (prisma) {
+  process.on('beforeExit', async () => {
+    await prisma.$disconnect()
+  })
+}
+
+if (process.env.NODE_ENV !== 'production' && prisma) globalForPrisma.prisma = prisma
 
 export default prisma
