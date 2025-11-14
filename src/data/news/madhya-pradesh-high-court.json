@@ -1,0 +1,47 @@
+{
+  "court": "Madhya Pradesh High Court",
+  "state": "Madhya Pradesh",
+  "established": "1956",
+  "jurisdiction": "Madhya Pradesh",
+  "news": [
+    {
+      "id": "mp001",
+      "title": "Tribal Forest Rights and Conservation Balance",
+      "content": "Madhya Pradesh High Court establishes guidelines for balancing tribal forest rights with conservation efforts, ensuring sustainable forest management and tribal welfare.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Madhya Pradesh High Court",
+      "publishDate": "2024-02-18T13:15:00Z",
+      "readTime": 8,
+      "tags": ["tribal forest rights", "conservation", "sustainable management"],
+      "imageUrl": "/images/news/tribal-forest-rights.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "mp002",
+      "title": "Agricultural Water Management and Irrigation Rights",
+      "content": "The court directs implementation of efficient agricultural water management systems and equitable irrigation rights distribution across Madhya Pradesh farming communities.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Madhya Pradesh High Court",
+      "publishDate": "2024-02-14T10:30:00Z",
+      "readTime": 7,
+      "tags": ["water management", "irrigation rights", "agricultural development"],
+      "imageUrl": "/images/news/agricultural-irrigation.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "mp003",
+      "title": "Heritage Site Protection and Tourism Development",
+      "content": "Madhya Pradesh High Court mandates protection measures for heritage sites while promoting sustainable tourism development, balancing conservation with economic growth.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Madhya Pradesh High Court",
+      "publishDate": "2024-02-10T15:45:00Z",
+      "readTime": 6,
+      "tags": ["heritage protection", "sustainable tourism", "cultural conservation"],
+      "imageUrl": "/images/news/heritage-tourism.jpg",
+      "hasVideo": false
+    }
+  ]
+}

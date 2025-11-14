@@ -1,0 +1,47 @@
+{
+  "court": "Manipur High Court",
+  "state": "Manipur",
+  "established": "2013",
+  "jurisdiction": "Manipur",
+  "news": [
+    {
+      "id": "mh001",
+      "title": "Manipur High Court Addresses Ethnic Harmony and Peace Initiatives",
+      "content": "The Manipur High Court has issued comprehensive guidelines for maintaining ethnic harmony and promoting peace initiatives across different communities in Manipur, emphasizing dialogue and mutual understanding.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Manipur High Court",
+      "publishDate": "2024-03-01T11:30:00Z",
+      "readTime": 8,
+      "tags": ["ethnic harmony", "peace initiatives", "community relations"],
+      "imageUrl": "/images/news/manipur-ethnic-harmony.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "mh002",
+      "title": "Border Area Development and Security Balance",
+      "content": "The court directs balanced development in Manipur's border areas while ensuring security considerations and promoting cross-border trade and cultural exchange within legal frameworks.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Manipur High Court",
+      "publishDate": "2024-02-26T14:15:00Z",
+      "readTime": 7,
+      "tags": ["border development", "security", "cross-border trade"],
+      "imageUrl": "/images/news/manipur-border-development.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "mh003",
+      "title": "Traditional Arts and Cultural Heritage Protection",
+      "content": "Manipur High Court mandates protection and promotion of traditional arts and cultural heritage, ensuring preservation of classical dance forms, handicrafts, and indigenous cultural practices.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Manipur High Court",
+      "publishDate": "2024-02-22T12:45:00Z",
+      "readTime": 6,
+      "tags": ["traditional arts", "cultural heritage", "indigenous practices"],
+      "imageUrl": "/images/news/manipur-cultural-heritage.jpg",
+      "hasVideo": false
+    }
+  ]
+}

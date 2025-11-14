@@ -1,0 +1,47 @@
+{
+  "court": "Tripura High Court",
+  "state": "Tripura",
+  "established": "2013",
+  "jurisdiction": "Tripura",
+  "news": [
+    {
+      "id": "tr001",
+      "title": "Tribal Welfare and Indigenous Rights Protection Framework",
+      "content": "Tripura High Court establishes comprehensive framework for tribal welfare and protection of indigenous rights, ensuring equitable development and cultural preservation in Tripura.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Tripura High Court",
+      "publishDate": "2024-03-07T10:30:00Z",
+      "readTime": 8,
+      "tags": ["tribal welfare", "indigenous rights", "cultural preservation"],
+      "imageUrl": "/images/news/tripura-tribal-welfare.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "tr002",
+      "title": "Cross-Border Migration and Settlement Guidelines",
+      "content": "The court provides guidelines for managing cross-border migration issues and refugee settlements, ensuring humanitarian considerations while maintaining security protocols.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Tripura High Court",
+      "publishDate": "2024-03-03T15:45:00Z",
+      "readTime": 9,
+      "tags": ["cross-border migration", "refugee settlements", "humanitarian law"],
+      "imageUrl": "/images/news/tripura-migration.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "tr003",
+      "title": "Bamboo Industry Development and Forest Conservation",
+      "content": "Tripura High Court promotes sustainable bamboo industry development while ensuring forest conservation, balancing economic growth with environmental protection.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Tripura High Court",
+      "publishDate": "2024-02-28T13:20:00Z",
+      "readTime": 7,
+      "tags": ["bamboo industry", "forest conservation", "sustainable development"],
+      "imageUrl": "/images/news/tripura-bamboo-industry.jpg",
+      "hasVideo": false
+    }
+  ]
+}

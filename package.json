@@ -1,0 +1,61 @@
+{
+  "name": "indian-advocate-forum",
+  "version": "1.0.0",
+  "description": "Professional platform for Indian advocates and legal professionals",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "setup": "chmod +x setup-mac.sh && ./setup-mac.sh",
+    "setup-linux": "chmod +x setup-linux.sh && ./setup-linux.sh"
+  },
+  "keywords": [
+    "nextjs",
+    "react",
+    "typescript",
+    "tailwindcss",
+    "legal",
+    "advocates"
+  ],
+  "author": "Indian Advocate Forum Team",
+  "license": "MIT",
+  "engines": {
+    "node": ">=18.0.0",
+    "npm": ">=8.0.0"
+  },
+  "dependencies": {
+    "@auth0/auth0-spa-js": "^2.4.1",
+    "@auth0/nextjs-auth0": "^2.6.3",
+    "@headlessui/react": "^1.7.17",
+    "@heroicons/react": "^2.0.18",
+    "@prisma/client": "^5.4.2",
+    "@stripe/react-stripe-js": "^5.3.0",
+    "@stripe/stripe-js": "^2.1.10",
+    "auth0": "^4.0.1",
+    "axios": "^1.5.1",
+    "cloudinary": "^2.7.0",
+    "dotenv": "^17.2.2",
+    "lucide-react": "^0.544.0",
+    "micro": "^10.0.1",
+    "mongodb": "^7.0.0",
+    "next": "^13.5.4",
+    "prisma": "^5.4.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-hot-toast": "^2.4.1",
+    "stripe": "^13.10.0",
+    "tailwindcss": "^3.3.3",
+    "typescript": "^5.2.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.8.0",
+    "@types/react": "^18.2.25",
+    "@types/react-dom": "^18.2.10",
+    "autoprefixer": "^10.4.16",
+    "eslint": "^8.51.0",
+    "eslint-config-next": "13.5.4",
+    "postcss": "^8.4.31"
+  }
+}

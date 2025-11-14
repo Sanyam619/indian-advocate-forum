@@ -1,0 +1,47 @@
+{
+  "court": "Punjab and Haryana High Court",
+  "state": "Punjab and Haryana",
+  "established": "1966",
+  "jurisdiction": "Punjab, Haryana, and Chandigarh",
+  "news": [
+    {
+      "id": "ph001",
+      "title": "Punjab Haryana HC Addresses Farmer Rights and Agricultural Reforms",
+      "content": "The Punjab and Haryana High Court has issued crucial directives on farmer rights, addressing issues of crop insurance, minimum support prices, and agricultural reform implementation to protect farming communities.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Punjab and Haryana High Court",
+      "publishDate": "2024-02-01T12:00:00Z",
+      "readTime": 9,
+      "tags": ["farmer rights", "agricultural reforms", "crop insurance"],
+      "imageUrl": "/images/news/farmer-rights.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "ph002",
+      "title": "Water Sharing Agreement Implementation",
+      "content": "The Punjab and Haryana High Court continues to monitor the implementation of water sharing agreements between the two states, ensuring equitable distribution and sustainable water management practices.",
+      "category": "Case Analysis",
+      "courtType": "high",
+      "courtName": "Punjab and Haryana High Court",
+      "publishDate": "2024-01-29T14:30:00Z",
+      "readTime": 7,
+      "tags": ["water sharing", "interstate agreement", "water management"],
+      "imageUrl": "/images/news/water-sharing.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "ph003",
+      "title": "Industrial Air Quality Monitoring Mandated",
+      "content": "The Punjab and Haryana High Court has mandated comprehensive air quality monitoring in industrial zones, with particular focus on reducing pollution levels and ensuring compliance with environmental standards.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Punjab and Haryana High Court",
+      "publishDate": "2024-01-25T16:15:00Z",
+      "readTime": 6,
+      "tags": ["air quality", "industrial pollution", "environmental monitoring"],
+      "imageUrl": "/images/news/air-quality.jpg",
+      "hasVideo": false
+    }
+  ]
+}

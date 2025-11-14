@@ -1,0 +1,109 @@
+{
+  "courtType": "high",
+  "courtName": "High Courts of India",
+  "description": "Latest news, judgments, and updates from various High Courts across India",
+  "news": [
+    {
+      "id": "hc-001",
+      "title": "Delhi High Court Streamlines Fast-Track Court Procedures",
+      "content": "The Delhi High Court has implemented comprehensive digital procedures aimed at streamlining fast-track court operations. The new system includes online case filing, digital evidence submission, and virtual hearings for specific case categories...",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Delhi High Court",
+      "publishDate": "2025-09-28T13:30:00Z",
+      "readTime": 6,
+      "tags": [
+        "Digital Courts",
+        "Fast-Track",
+        "Court Procedures",
+        "Case Management"
+      ],
+      "imageUrl": ""
+    },
+    {
+      "id": "hc-002",
+      "title": "Bombay High Court Rules on Public Interest Litigation Guidelines",
+      "content": "The Bombay High Court has delivered a significant judgment clarifying the parameters for Public Interest Litigation (PIL) in cases involving environmental protection and social justice. The court emphasized the need for genuine public interest...",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Bombay High Court",
+      "publishDate": "2025-09-27T10:15:00Z",
+      "readTime": 8,
+      "tags": [
+        "PIL",
+        "Public Interest",
+        "Environmental Law",
+        "Social Justice"
+      ],
+      "imageUrl": ""
+    },
+    {
+      "id": "hc-003",
+      "title": "Madras High Court Addresses Cyber Crime Jurisdiction Issues",
+      "content": "The Madras High Court has addressed critical issues related to jurisdiction in cyber crime cases, particularly those involving multiple states. The judgment provides clarity on investigation procedures and coordination between different state agencies...",
+      "category": "Case Analysis",
+      "courtType": "high",
+      "courtName": "Madras High Court",
+      "publishDate": "2025-09-26T15:45:00Z",
+      "readTime": 7,
+      "tags": [
+        "Cyber Crime",
+        "Jurisdiction",
+        "Criminal Law",
+        "Investigation"
+      ],
+      "imageUrl": ""
+    },
+    {
+      "id": "hc-004",
+      "title": "Karnataka High Court Expands Legal Aid Services",
+      "content": "The Karnataka High Court has launched an expanded legal aid program that leverages technology to provide better access to justice for economically disadvantaged individuals. The program includes online consultations and digital document assistance...",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Karnataka High Court",
+      "publishDate": "2025-09-25T12:00:00Z",
+      "readTime": 5,
+      "tags": [
+        "Legal Aid",
+        "Access to Justice",
+        "Technology",
+        "Social Welfare"
+      ],
+      "imageUrl": ""
+    },
+    {
+      "id": "hc-005",
+      "title": "Rajasthan High Court Issues Consumer Protection Guidelines",
+      "content": "The Rajasthan High Court has issued detailed guidelines for consumer protection in the digital age, specifically addressing e-commerce disputes, online fraud, and digital payment issues. The guidelines aim to strengthen consumer rights...",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Rajasthan High Court",
+      "publishDate": "2025-09-24T14:30:00Z",
+      "readTime": 6,
+      "tags": [
+        "Consumer Protection",
+        "E-commerce",
+        "Digital Transactions",
+        "Consumer Rights"
+      ],
+      "imageUrl": ""
+    },
+    {
+      "id": "hc-006",
+      "title": "Punjab & Haryana High Court Modernizes Court Infrastructure",
+      "content": "The Punjab & Haryana High Court has completed a major modernization project that includes state-of-the-art digital infrastructure, AI-assisted legal research tools, and comprehensive case management systems...",
+      "category": "High Court",
+      "courtType": "high",
+      "courtName": "Punjab & Haryana High Court",
+      "publishDate": "2025-09-23T11:20:00Z",
+      "readTime": 4,
+      "tags": [
+        "Court Infrastructure",
+        "Modernization",
+        "Digital Technology",
+        "AI Research"
+      ],
+      "imageUrl": ""
+    }
+  ]
+}

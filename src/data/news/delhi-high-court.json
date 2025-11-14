@@ -1,0 +1,59 @@
+{
+  "courtType": "high",
+  "courtName": "Delhi High Court",
+  "description": "Latest news, judgments, and updates from Delhi High Court",
+  "news": [
+    {
+      "id": "dhc-001",
+      "title": "Delhi High Court Streamlines Fast-Track Court Procedures",
+      "content": "The Delhi High Court has implemented comprehensive digital procedures aimed at streamlining fast-track court operations. The new system includes online case filing, digital evidence submission, and virtual hearings for specific case categories. This initiative is expected to reduce case pendency and improve access to justice for litigants across the National Capital Territory.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Delhi High Court",
+      "publishDate": "2025-09-28T13:30:00Z",
+      "readTime": 6,
+      "tags": [
+        "Digital Courts",
+        "Fast-Track",
+        "Court Procedures",
+        "Case Management"
+      ],
+      "imageUrl": ""
+    },
+    {
+      "id": "dhc-002",
+      "title": "Delhi High Court Issues Guidelines on Cyber Crime Cases",
+      "content": "The Delhi High Court has issued comprehensive guidelines for handling cyber crime cases, emphasizing the need for specialized investigation techniques and digital evidence preservation. The guidelines address emerging challenges in cyber security and online fraud cases that are increasingly coming before the court.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Delhi High Court",
+      "publishDate": "2025-09-26T11:20:00Z",
+      "readTime": 5,
+      "tags": [
+        "Cyber Crime",
+        "Digital Evidence",
+        "Investigation",
+        "Guidelines"
+      ],
+      "imageUrl": ""
+    },
+    {
+      "id": "dhc-003",
+      "title": "Delhi High Court Rules on Environmental Compliance for Industries",
+      "content": "In a landmark judgment delivered today, the Delhi High Court has established stringent environmental compliance norms for industrial units operating within the National Capital Region. The court emphasized that industrial operations must adhere to prescribed pollution control measures and obtain proper environmental clearances. The judgment comes in response to multiple petitions filed by environmental activists and local residents concerned about air and water pollution. The court has directed the Delhi Pollution Control Committee to conduct regular inspections and submit quarterly reports. Industries found in violation will face immediate closure orders and heavy penalties. This ruling is expected to significantly impact industrial operations in Delhi and set a precedent for other metropolitan cities across India.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Delhi High Court",
+      "publishDate": "2025-10-04T14:30:00Z",
+      "readTime": 8,
+      "tags": [
+        "Environment",
+        "Industrial Compliance",
+        "Pollution Control",
+        "Landmark Judgment",
+        "Delhi NCR"
+      ],
+      "imageUrl": ""
+    }
+  ]
+}

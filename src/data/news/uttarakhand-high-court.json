@@ -1,0 +1,47 @@
+{
+  "court": "Uttarakhand High Court",
+  "state": "Uttarakhand",
+  "established": "2000",
+  "jurisdiction": "Uttarakhand",
+  "news": [
+    {
+      "id": "uh001",
+      "title": "Himalayan Ecosystem Protection and Climate Change Guidelines",
+      "content": "Uttarakhand High Court issues comprehensive guidelines for Himalayan ecosystem protection, addressing climate change impacts, glacier conservation, and sustainable mountain development.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Uttarakhand High Court",
+      "publishDate": "2024-02-28T12:00:00Z",
+      "readTime": 10,
+      "tags": ["Himalayan ecosystem", "climate change", "glacier conservation"],
+      "imageUrl": "/images/news/himalayan-ecosystem.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "uh002",
+      "title": "Pilgrimage Tourism Safety and Environmental Management",
+      "content": "The court mandates safety protocols and environmental management for pilgrimage tourism in Uttarakhand, ensuring visitor safety and ecological preservation.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Uttarakhand High Court",
+      "publishDate": "2024-02-24T15:30:00Z",
+      "readTime": 8,
+      "tags": ["pilgrimage tourism", "safety protocols", "environmental management"],
+      "imageUrl": "/images/news/pilgrimage-safety.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "uh003",
+      "title": "Forest Fire Prevention and Management Systems",
+      "content": "Uttarakhand High Court directs implementation of advanced forest fire prevention and management systems, emphasizing community participation and technology integration.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Uttarakhand High Court",
+      "publishDate": "2024-02-20T13:45:00Z",
+      "readTime": 7,
+      "tags": ["forest fire prevention", "management systems", "community participation"],
+      "imageUrl": "/images/news/forest-fire-management.jpg",
+      "hasVideo": false
+    }
+  ]
+}

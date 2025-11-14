@@ -1,0 +1,47 @@
+{
+  "court": "Patna High Court",
+  "state": "Bihar",
+  "established": "1916",
+  "jurisdiction": "Bihar",
+  "news": [
+    {
+      "id": "ph001",
+      "title": "Flood Management and River Embankment Guidelines",
+      "content": "Patna High Court issues comprehensive guidelines for flood management and river embankment construction in Bihar, emphasizing scientific planning and community participation.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Patna High Court",
+      "publishDate": "2024-02-20T12:00:00Z",
+      "readTime": 9,
+      "tags": ["flood management", "river embankment", "disaster prevention"],
+      "imageUrl": "/images/news/flood-management-bihar.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "ph002",
+      "title": "Rural Education Infrastructure Development",
+      "content": "The court directs Bihar government to improve rural education infrastructure, ensuring proper school buildings, qualified teachers, and educational resources in remote areas.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Patna High Court",
+      "publishDate": "2024-02-16T14:20:00Z",
+      "readTime": 7,
+      "tags": ["rural education", "infrastructure development", "quality education"],
+      "imageUrl": "/images/news/rural-education-bihar.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "ph003",
+      "title": "Agricultural Credit and Farmer Welfare Schemes",
+      "content": "Patna High Court mandates proper implementation of agricultural credit schemes and farmer welfare programs, ensuring timely disbursement and transparent processes.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Patna High Court",
+      "publishDate": "2024-02-12T11:30:00Z",
+      "readTime": 8,
+      "tags": ["agricultural credit", "farmer welfare", "rural development"],
+      "imageUrl": "/images/news/agricultural-credit.jpg",
+      "hasVideo": false
+    }
+  ]
+}

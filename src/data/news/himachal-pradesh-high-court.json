@@ -1,0 +1,47 @@
+{
+  "court": "Himachal Pradesh High Court",
+  "state": "Himachal Pradesh",
+  "established": "1971",
+  "jurisdiction": "Himachal Pradesh",
+  "news": [
+    {
+      "id": "hp001",
+      "title": "Hill Station Environmental Protection Measures",
+      "content": "Himachal Pradesh High Court has issued strict guidelines for environmental protection in hill stations, regulating construction activities and promoting sustainable tourism practices.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Himachal Pradesh High Court",
+      "publishDate": "2024-02-10T11:00:00Z",
+      "readTime": 6,
+      "tags": ["hill stations", "environmental protection", "sustainable tourism"],
+      "imageUrl": "/images/news/hill-station-environment.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "hp002",
+      "title": "Hydroelectric Projects Environmental Impact Assessment",
+      "content": "The court mandates comprehensive environmental impact assessments for all hydroelectric projects in Himachal Pradesh, ensuring minimal ecological disruption and community consultation.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Himachal Pradesh High Court",
+      "publishDate": "2024-02-06T14:45:00Z",
+      "readTime": 8,
+      "tags": ["hydroelectric projects", "environmental assessment", "ecological protection"],
+      "imageUrl": "/images/news/hydroelectric-environment.jpg",
+      "hasVideo": false
+    },
+    {
+      "id": "hp003",
+      "title": "Apple Farmers Rights and Market Access",
+      "content": "Himachal Pradesh High Court directs government to ensure fair market access and pricing for apple farmers, addressing issues of middleman exploitation and storage facilities.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Himachal Pradesh High Court",
+      "publishDate": "2024-02-01T10:15:00Z",
+      "readTime": 7,
+      "tags": ["apple farmers", "market access", "agricultural rights"],
+      "imageUrl": "/images/news/apple-farmers.jpg",
+      "hasVideo": false
+    }
+  ]
+}

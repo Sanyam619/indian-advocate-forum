@@ -1,0 +1,41 @@
+{
+  "courtType": "high",
+  "courtName": "Calcutta High Court",
+  "description": "Latest news, judgments, and updates from Calcutta High Court",
+  "news": [
+    {
+      "id": "chc-001",
+      "title": "Calcutta High Court Establishes Environmental Bench",
+      "content": "The Calcutta High Court has established a dedicated environmental bench to handle all environmental disputes and green tribunal matters in West Bengal. This specialized bench will focus on environmental protection cases, pollution control matters, and conservation disputes affecting the state.",
+      "category": "Legal Update",
+      "courtType": "high",
+      "courtName": "Calcutta High Court",
+      "publishDate": "2025-09-24T09:30:00Z",
+      "readTime": 7,
+      "tags": [
+        "Environmental Law",
+        "Green Tribunal",
+        "Pollution Control",
+        "West Bengal"
+      ],
+      "imageUrl": ""
+    },
+    {
+      "id": "chc-002",
+      "title": "Calcutta High Court Rules on Land Acquisition Disputes",
+      "content": "The Calcutta High Court has delivered an important judgment on land acquisition disputes, clarifying the compensation mechanism for farmers and establishing new precedents for fair value assessment in rural land acquisition cases across West Bengal.",
+      "category": "Judgment",
+      "courtType": "high",
+      "courtName": "Calcutta High Court",
+      "publishDate": "2025-09-22T16:20:00Z",
+      "readTime": 9,
+      "tags": [
+        "Land Acquisition",
+        "Compensation",
+        "Rural Land",
+        "Farmers Rights"
+      ],
+      "imageUrl": ""
+    }
+  ]
+}
