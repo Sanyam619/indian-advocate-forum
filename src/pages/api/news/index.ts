@@ -3,10 +3,6 @@ import { getSession } from '@auth0/nextjs-auth0';
 import prisma from '../../../lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  // Check for master key for admin operations
-  const masterKey = req.headers['x-master-key'] as string;
-  const isAdminRequest = masterKey === process.env.MASTER_ADMIN_KEY;
-
   // For GET requests, allow unauthenticated access
   if (req.method === 'GET') {
     try {
@@ -34,7 +30,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   // For POST requests, check authentication
   const session = await getSession(req, res);
 
-  if (!isAdminRequest && !session?.user) {
+  if (!session?.user) {
     return res.status(401).json({ message: 'Unauthorized' });
   }
 
@@ -62,33 +58,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   if (req.method === 'POST') {
-    let user = null;
+    const user = await prisma.user.findUnique({
+      where: { auth0Id: session.user.sub },
+    });
 
-    if (isAdminRequest) {
-      // For admin requests with master key, create a system user if needed
-      user = await prisma.user.findFirst({
-        where: { role: 'ADMIN' }
-      });
-
-      if (!user) {
-        // Create a system admin user for master key operations
-        user = await prisma.user.create({
-          data: {
-            email: 'system@admin.com',
-            fullName: 'System Admin',
-            role: 'ADMIN',
-            auth0Id: 'system-admin'
-          }
-        });
-      }
-    } else {
-      user = await prisma.user.findUnique({
-        where: { auth0Id: session!.user.sub },
-      });
-
-      if (!user || (user.role !== 'ADMIN' && user.role !== 'ADVOCATE')) {
-        return res.status(403).json({ message: 'Only admins and advocates can post news' });
-      }
+    if (!user || (user.role !== 'ADMIN' && user.role !== 'ADVOCATE')) {
+      return res.status(403).json({ message: 'Only admins and advocates can post news' });
     }
 
     try {

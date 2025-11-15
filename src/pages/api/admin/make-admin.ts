@@ -1,9 +1,10 @@
 import { NextApiRequest, NextApiResponse } from 'next';
+import { getSession } from '@auth0/nextjs-auth0';
 import prisma from '../../../lib/prisma';
 
 /**
- * SUPER ADMIN ENDPOINT - Only for system owner
- * This endpoint should be protected by environment variables
+ * ADMIN ENDPOINT - Only existing admins can promote other users
+ * First admin must be created directly in MongoDB
  */
 export default async function makeAdmin(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -11,10 +12,18 @@ export default async function makeAdmin(req: NextApiRequest, res: NextApiRespons
   }
 
   try {
-    // SECURITY: Check if request has the master key (only system owner should know this)
-    const masterKey = req.headers['x-master-key'];
-    if (!masterKey || masterKey !== process.env.MASTER_ADMIN_KEY) {
-      return res.status(403).json({ error: 'Unauthorized: Invalid master key' });
+    // Check if requester is an admin
+    const session = await getSession(req, res);
+    if (!session?.user) {
+      return res.status(401).json({ error: 'Not authenticated' });
+    }
+
+    const requester = await prisma.user.findUnique({
+      where: { auth0Id: session.user.sub }
+    });
+
+    if (!requester || requester.role !== 'ADMIN') {
+      return res.status(403).json({ error: 'Unauthorized: Admin access required' });
     }
 
     const { userEmail } = req.body;
