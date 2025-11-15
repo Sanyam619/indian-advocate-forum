@@ -6,7 +6,6 @@ import { getSession } from '@auth0/nextjs-auth0';
 import Head from 'next/head';
 import Layout from '@/components/Layout';
 import NewsVideoUploadForm from '@/components/news/NewsVideoUploadForm';
-import prisma from '@/lib/prisma';
 
 interface User {
   id: string;
@@ -75,6 +74,9 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         },
       };
     }
+
+    // Import Prisma dynamically to avoid build-time errors
+    const prisma = (await import('@/lib/prisma')).default;
 
     // Get session
     let session;

@@ -6,7 +6,6 @@ import { useRouter } from 'next/router';
 import Head from 'next/head';
 import { CameraIcon, PhotoIcon, PencilIcon, XMarkIcon, UserCircleIcon, TrashIcon, PlusIcon } from '@heroicons/react/24/outline';
 import Layout from '../components/Layout';
-import prisma from '../lib/prisma';
 import { useUserProfile } from '../hooks/useUserProfile';
 
 interface UserProfile {
@@ -44,6 +43,9 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
         },
       };
     }
+
+    // Import Prisma dynamically to avoid build-time errors
+    const prisma = (await import('../lib/prisma')).default;
 
     try {
       // Add timeout for database operations

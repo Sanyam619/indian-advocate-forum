@@ -2,7 +2,6 @@ import AdvocateProfileForm from '../components/auth/AdvocateProfileForm';
 import { withPageAuthRequired, getSession } from '@auth0/nextjs-auth0';
 import Head from 'next/head';
 import { GetServerSideProps } from 'next';
-import prisma from '../lib/prisma';
 import { useRouter } from 'next/router';
 import { useEffect, useState, useRef } from 'react';
 import { useUser } from '@auth0/nextjs-auth0/client';
@@ -34,6 +33,9 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
         },
       };
     }
+
+    // Import Prisma dynamically to avoid build-time errors
+    const prisma = (await import('../lib/prisma')).default;
 
     // Check if user has already completed profile setup
     const user = await prisma.user.findUnique({
