@@ -11,11 +11,13 @@ export async function getAuth0Client(): Promise<Auth0Client> {
   // Dynamically determine the current origin
   const redirectUri = typeof window !== 'undefined' ? window.location.origin : process.env.NEXT_PUBLIC_BASE_URL;
   
-  console.log("Auth0 Client Configuration:", {
-    domain,
-    clientId,
-    redirectUri
-  });
+  if (process.env.NODE_ENV === 'development') {
+    console.log("Auth0 Client Configuration:", {
+      domain,
+      clientId,
+      redirectUri
+    });
+  }
 
   client = await createAuth0Client({
     domain,

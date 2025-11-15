@@ -89,7 +89,9 @@ export default function SupremeCourt() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault()
     // Implement search functionality
-    console.log('Searching for:', searchQuery)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Searching for:', searchQuery)
+    }
   }
 
   return (

@@ -48,7 +48,9 @@ const NewsList: React.FC<NewsListProps> = ({
               news={newsItem}
               onClick={() => {
                 // Handle news item click - could navigate to detail page
-                console.log('News clicked:', newsItem.id);
+                if (process.env.NODE_ENV === 'development') {
+                  console.log('News clicked:', newsItem.id);
+                }
               }}
             />
           ))}

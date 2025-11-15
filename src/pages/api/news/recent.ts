@@ -38,7 +38,9 @@ function getFallbackRecentNews(limit: number = 10) {
     return sortedNews;
   }
 
-  console.log('📰 Loading fallback news data...');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('📰 Loading fallback news data...');
+  }
   try {
     const allNews: NewsItem[] = [
       ...(supremeCourtData.news as NewsItem[]),
@@ -51,7 +53,9 @@ function getFallbackRecentNews(limit: number = 10) {
     cachedFallbackNews = allNews.sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
     cacheTimestamp = now;
     
-    console.log('📊 Total static news items loaded and cached:', allNews.length);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('📊 Total static news items loaded and cached:', allNews.length);
+    }
 
     const sortedNews = cachedFallbackNews
       .slice(0, limit)
@@ -64,7 +68,9 @@ function getFallbackRecentNews(limit: number = 10) {
         slug: item.id
       }));
 
-    console.log(`✅ Returning ${sortedNews.length} fallback news items`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`✅ Returning ${sortedNews.length} fallback news items`);
+    }
     return sortedNews;
   } catch (error) {
     console.error('Error processing fallback data:', error);
@@ -98,7 +104,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { limit = '10' } = req.query;
   const newsLimit = parseInt(limit as string, 10);
 
-  console.log('� Loading recent news from static JSON files...');
+  if (process.env.NODE_ENV === 'development') {
+    console.log('📰 Loading recent news from static JSON files...');
+  }
   
   // Always use static JSON files for news data
   const recentNews = getFallbackRecentNews(newsLimit);
