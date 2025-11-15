@@ -14,7 +14,7 @@
       "publishDate": "2024-02-05T10:30:00Z",
       "readTime": 7,
       "tags": ["forest conservation", "tribal rights", "environmental protection"],
-      "imageUrl": "/images/news/forest-conservation.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/chatisgarh_high_court_qg36yh.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-02T14:15:00Z",
       "readTime": 6,
       "tags": ["mining operations", "environmental compliance", "community rights"],
-      "imageUrl": "/images/news/mining-environment.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/chatisgarh_high_court_qg36yh.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-01-28T11:45:00Z",
       "readTime": 5,
       "tags": ["digital courts", "rural access", "justice delivery"],
-      "imageUrl": "/images/news/rural-digital-courts.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/chatisgarh_high_court_qg36yh.jpg",
       "hasVideo": false
     }
   ]

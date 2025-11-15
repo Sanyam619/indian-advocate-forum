@@ -14,7 +14,7 @@
       "publishDate": "2024-01-30T11:00:00Z",
       "readTime": 5,
       "tags": ["Tamil language", "accessibility", "linguistic rights"],
-      "imageUrl": "/images/news/madras-hc-tamil.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/madras_high_court_uf2eru.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-01-26T15:30:00Z",
       "readTime": 8,
       "tags": ["coastal protection", "marine ecosystem", "environmental conservation"],
-      "imageUrl": "/images/news/coastal-protection.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/madras_high_court_uf2eru.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-01-23T13:45:00Z",
       "readTime": 6,
       "tags": ["education rights", "school infrastructure", "quality education"],
-      "imageUrl": "/images/news/education-rights.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/madras_high_court_uf2eru.jpg",
       "hasVideo": false
     }
   ]

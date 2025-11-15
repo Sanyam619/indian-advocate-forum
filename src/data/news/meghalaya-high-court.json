@@ -14,7 +14,7 @@
       "publishDate": "2024-03-03T10:45:00Z",
       "readTime": 9,
       "tags": ["coal mining", "environmental restoration", "tribal rights"],
-      "imageUrl": "/images/news/meghalaya-coal-restoration.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/meghalaya_high_court_osh5zc.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-28T15:20:00Z",
       "readTime": 7,
       "tags": ["forest conservation", "biodiversity protection", "community conservation"],
-      "imageUrl": "/images/news/meghalaya-forest-conservation.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/meghalaya_high_court_osh5zc.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-02-24T13:30:00Z",
       "readTime": 8,
       "tags": ["traditional governance", "tribal administration", "customary laws"],
-      "imageUrl": "/images/news/meghalaya-governance.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/meghalaya_high_court_osh5zc.jpg",
       "hasVideo": false
     }
   ]

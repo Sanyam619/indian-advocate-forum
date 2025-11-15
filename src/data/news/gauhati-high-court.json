@@ -14,7 +14,7 @@
       "publishDate": "2024-02-08T12:00:00Z",
       "readTime": 9,
       "tags": ["NRC", "citizenship", "constitutional rights"],
-      "imageUrl": "/images/news/nrc-citizenship.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/gauhati_high_court_xgmczd.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-04T15:30:00Z",
       "readTime": 7,
       "tags": ["flood management", "disaster preparedness", "northeast India"],
-      "imageUrl": "/images/news/flood-management.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/gauhati_high_court_xgmczd.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-01-30T13:15:00Z",
       "readTime": 8,
       "tags": ["tea garden workers", "labor rights", "social security"],
-      "imageUrl": "/images/news/tea-workers-rights.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/gauhati_high_court_xgmczd.jpg",
       "hasVideo": false
     }
   ]

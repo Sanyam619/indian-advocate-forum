@@ -14,7 +14,7 @@
       "publishDate": "2024-02-10T11:00:00Z",
       "readTime": 6,
       "tags": ["hill stations", "environmental protection", "sustainable tourism"],
-      "imageUrl": "/images/news/hill-station-environment.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/hp_high_court_ybiij3.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-06T14:45:00Z",
       "readTime": 8,
       "tags": ["hydroelectric projects", "environmental assessment", "ecological protection"],
-      "imageUrl": "/images/news/hydroelectric-environment.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/hp_high_court_ybiij3.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-02-01T10:15:00Z",
       "readTime": 7,
       "tags": ["apple farmers", "market access", "agricultural rights"],
-      "imageUrl": "/images/news/apple-farmers.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/hp_high_court_ybiij3.jpg",
       "hasVideo": false
     }
   ]

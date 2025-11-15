@@ -14,7 +14,7 @@
       "publishDate": "2024-02-26T10:15:00Z",
       "readTime": 8,
       "tags": ["cyclone preparedness", "coastal protection", "disaster management"],
-      "imageUrl": "/images/news/cyclone-preparedness.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/orissa_high_court_fn7yt1.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-22T14:30:00Z",
       "readTime": 7,
       "tags": ["temple conservation", "religious tourism", "heritage protection"],
-      "imageUrl": "/images/news/temple-conservation.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/orissa_high_court_fn7yt1.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-02-18T11:45:00Z",
       "readTime": 9,
       "tags": ["tribal land rights", "mining operations", "community consent"],
-      "imageUrl": "/images/news/tribal-mining-rights.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/orissa_high_court_fn7yt1.jpg",
       "hasVideo": false
     }
   ]

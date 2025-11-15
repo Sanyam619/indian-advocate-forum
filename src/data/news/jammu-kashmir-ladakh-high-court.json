@@ -14,7 +14,7 @@
       "publishDate": "2024-02-12T12:30:00Z",
       "readTime": 9,
       "tags": ["border development", "security", "community welfare"],
-      "imageUrl": "/images/news/border-development.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/j_k_high_court_wvq0zj.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-08T15:00:00Z",
       "readTime": 8,
       "tags": ["Ladakh", "high altitude", "environmental conservation"],
-      "imageUrl": "/images/news/ladakh-environment.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/j_k_high_court_wvq0zj.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-02-04T11:45:00Z",
       "readTime": 7,
       "tags": ["tourism recovery", "safety protocols", "sustainable tourism"],
-      "imageUrl": "/images/news/tourism-recovery.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/j_k_high_court_wvq0zj.jpg",
       "hasVideo": false
     }
   ]

@@ -14,7 +14,7 @@
       "publishDate": "2024-02-18T13:15:00Z",
       "readTime": 8,
       "tags": ["tribal forest rights", "conservation", "sustainable management"],
-      "imageUrl": "/images/news/tribal-forest-rights.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/mp_high_court_ran9xo.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-14T10:30:00Z",
       "readTime": 7,
       "tags": ["water management", "irrigation rights", "agricultural development"],
-      "imageUrl": "/images/news/agricultural-irrigation.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/mp_high_court_ran9xo.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-02-10T15:45:00Z",
       "readTime": 6,
       "tags": ["heritage protection", "sustainable tourism", "cultural conservation"],
-      "imageUrl": "/images/news/heritage-tourism.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977010/mp_high_court_ran9xo.jpg",
       "hasVideo": false
     }
   ]

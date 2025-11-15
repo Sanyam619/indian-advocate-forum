@@ -14,7 +14,7 @@
       "publishDate": "2024-02-20T12:00:00Z",
       "readTime": 9,
       "tags": ["flood management", "river embankment", "disaster prevention"],
-      "imageUrl": "/images/news/flood-management-bihar.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/patna_high_court_qfww8t.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-16T14:20:00Z",
       "readTime": 7,
       "tags": ["rural education", "infrastructure development", "quality education"],
-      "imageUrl": "/images/news/rural-education-bihar.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/patna_high_court_qfww8t.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-02-12T11:30:00Z",
       "readTime": 8,
       "tags": ["agricultural credit", "farmer welfare", "rural development"],
-      "imageUrl": "/images/news/agricultural-credit.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/patna_high_court_qfww8t.jpg",
       "hasVideo": false
     }
   ]

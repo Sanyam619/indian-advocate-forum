@@ -14,7 +14,7 @@
       "publishDate": "2024-01-20T11:00:00Z",
       "readTime": 5,
       "tags": ["e-filing", "digitization", "court modernization"],
-      "imageUrl": "/images/news/ap-hc-efiling.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977007/AP_high_court_a9hnjn.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-01-18T15:30:00Z",
       "readTime": 8,
       "tags": ["water dispute", "agriculture", "inter-state"],
-      "imageUrl": "/images/news/water-dispute.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977007/AP_high_court_a9hnjn.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-01-12T13:45:00Z",
       "readTime": 6,
       "tags": ["consumer protection", "e-commerce", "digital rights"],
-      "imageUrl": "/images/news/consumer-protection.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977007/AP_high_court_a9hnjn.jpg",
       "hasVideo": false
     }
   ]

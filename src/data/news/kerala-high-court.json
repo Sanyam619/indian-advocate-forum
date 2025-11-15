@@ -14,7 +14,7 @@
       "publishDate": "2024-02-16T14:30:00Z",
       "readTime": 9,
       "tags": ["coastal erosion", "sea level rise", "coastal management"],
-      "imageUrl": "/images/news/coastal-erosion.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/kerala_high_court_dfvpol.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-02-12T11:45:00Z",
       "readTime": 6,
       "tags": ["spices trade", "quality standards", "farmer protection"],
-      "imageUrl": "/images/news/spices-trade.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/kerala_high_court_dfvpol.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-02-08T15:20:00Z",
       "readTime": 8,
       "tags": ["backwater ecosystem", "conservation", "aquatic biodiversity"],
-      "imageUrl": "/images/news/backwater-conservation.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977009/kerala_high_court_dfvpol.jpg",
       "hasVideo": false
     }
   ]

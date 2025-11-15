@@ -14,7 +14,7 @@
       "publishDate": "2024-01-15T10:00:00Z",
       "readTime": 5,
       "tags": ["digitization", "case management", "judicial reform"],
-      "imageUrl": "/images/news/allahabad-hc-digital.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977007/allhabad_high_court_wtsncg.jpg",
       "hasVideo": false
     },
     {
@@ -27,7 +27,7 @@
       "publishDate": "2024-01-10T14:30:00Z",
       "readTime": 7,
       "tags": ["environment", "pollution", "government directive"],
-      "imageUrl": "/images/news/environment-protection.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977007/allhabad_high_court_wtsncg.jpg",
       "hasVideo": false
     },
     {
@@ -40,7 +40,7 @@
       "publishDate": "2024-01-05T09:15:00Z",
       "readTime": 6,
       "tags": ["women safety", "fast-track courts", "judicial reform"],
-      "imageUrl": "/images/news/women-justice.jpg",
+      "imageUrl": "https://res.cloudinary.com/dktizv6bj/image/upload/v1761977007/allhabad_high_court_wtsncg.jpg",
       "hasVideo": false
     }
   ]
