@@ -9,6 +9,7 @@ import PremiumModal from './PremiumModal';
 import { useUserProfile } from '../hooks/useUserProfile';
 import NewsTicker from './NewsTicker';
 import Footer from './Footer';
+import EmailVerificationBanner from './auth/EmailVerificationBanner';
 
 // Import icons directly to avoid dynamic loading delays
 import { 
@@ -1065,6 +1066,9 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
 
       {/* News Ticker */}
       <NewsTicker speed={25} pauseOnHover={true} showLabel={true} />
+
+      {/* Email Verification Banner */}
+      <EmailVerificationBanner />
 
       {/* Main Content */}
       <main className="flex-1">

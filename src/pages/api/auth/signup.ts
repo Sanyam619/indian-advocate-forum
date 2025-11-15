@@ -28,7 +28,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       email,
       password: req.body.password,
       name: fullName,
-      email_verified: true, // Skip email verification for easier testing
+      email_verified: false, // Require email verification for security
       user_metadata: {
         isAdvocate,
         barRegistration,
