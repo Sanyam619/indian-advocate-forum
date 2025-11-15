@@ -59,16 +59,8 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 
       const user = await Promise.race([userPromise, timeoutPromise]) as any;
 
-      // Only redirect to profile-setup if user exists but is not verified
-      // If user doesn't exist, allow profile access (will be handled by fallback)
-      if (user && !user.isVerified) {
-        return {
-          redirect: {
-            destination: '/profile-setup',
-            permanent: false,
-          },
-        };
-      }
+      // Don't redirect - allow all authenticated users to access profile
+      // They can complete profile setup from within the profile page if needed
 
       // If user exists in database, return their data
       if (user) {
