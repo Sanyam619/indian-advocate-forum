@@ -2,7 +2,7 @@ import { InitAuth0 } from '@auth0/nextjs-auth0';
 
 const config = {
   issuerBaseURL: `https://${process.env.NEXT_PUBLIC_AUTH0_DOMAIN}`,
-  baseURL: process.env.NEXT_PUBLIC_BASE_URL || 'http://localhost:3000',
+  baseURL: process.env.NEXT_PUBLIC_BASE_URL || (typeof window !== 'undefined' ? window.location.origin : ''),
   clientID: process.env.NEXT_PUBLIC_AUTH0_CLIENT_ID || '',
   clientSecret: process.env.AUTH0_CLIENT_SECRET || '',
   secret: process.env.AUTH0_SECRET || '',
