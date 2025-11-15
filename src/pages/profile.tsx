@@ -50,7 +50,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
     try {
       // Add timeout for database operations
       const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error('Database operation timeout')), 3000);
+        setTimeout(() => reject(new Error('Database operation timeout')), 5000);
       });
 
       const userPromise = prisma.user.findUnique({
@@ -59,7 +59,9 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 
       const user = await Promise.race([userPromise, timeoutPromise]) as any;
 
-      if (!user?.isVerified) {
+      // Only redirect to profile-setup if user exists but is not verified
+      // If user doesn't exist, allow profile access (will be handled by fallback)
+      if (user && !user.isVerified) {
         return {
           redirect: {
             destination: '/profile-setup',
@@ -68,23 +70,46 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
         };
       }
 
+      // If user exists in database, return their data
+      if (user) {
+        return {
+          props: {
+            initialProfile: {
+              email: user.email || session.user.email || '',
+              fullName: user.fullName || session.user.name || '',
+              role: user.role || 'advocate',
+              barRegistrationNo: user.barRegistrationNo || '',
+              yearsOfExperience: user.yearsOfExperience || '',
+              profilePhoto: user.profilePhoto || session.user.picture || '',
+              isProfileSetup: user.isProfileSetup || false,
+              isVerified: user.isVerified || true,
+              city: user.city || '',
+              specialization: user.specialization || [],
+              bio: user.bio || '',
+              education: user.education || [],
+              languages: user.languages || [],
+              officeAddress: user.officeAddress || '',
+              isPremium: user.isPremium || false,
+              premiumPlan: user.premiumPlan || null,
+              premiumExpiresAt: user.premiumExpiresAt ? user.premiumExpiresAt.toISOString() : null,
+            },
+          },
+        };
+      }
+
+      // If no user in database, use Auth0 session data
       return {
         props: {
           initialProfile: {
-            email: user.email || session.user.email || '',
-            fullName: user.fullName || session.user.name || '',
-            role: user.role || 'advocate',
-            barRegistrationNo: user.barRegistrationNo || '',
-            yearsOfExperience: user.yearsOfExperience || '',
-            profilePhoto: user.profilePhoto || session.user.picture || '',
-            isProfileSetup: user.isProfileSetup || false,
-            isVerified: user.isVerified || true,
-            city: user.city || '',
-            specialization: user.specialization || [],
-            bio: user.bio || '',
-            education: user.education || [],
-            languages: user.languages || [],
-            officeAddress: user.officeAddress || '',
+            email: session.user.email || '',
+            fullName: session.user.name || '',
+            role: 'USER',
+            profilePhoto: session.user.picture || '',
+            isProfileSetup: false,
+            isVerified: true, // Allow access since they're authenticated
+            specialization: [],
+            education: [],
+            languages: [],
           },
         },
       };

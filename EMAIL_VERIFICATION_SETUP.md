@@ -74,7 +74,7 @@ Email verification has been implemented to prevent fake accounts and spam:
       
       <p style="color: #666; font-size: 12px; text-align: center;">
         Indian Advocate Forum - Connecting Legal Professionals<br>
-        <a href="https://indian-advocate-forum-2arp-2jjwc2368.vercel.app" style="color: #1e40af;">Visit Our Website</a>
+        <a href="https://indian-advocate-forum.vercel.app" style="color: #1e40af;">Visit Our Website</a>
       </p>
     </div>
   </div>
@@ -90,13 +90,13 @@ Email verification has been implemented to prevent fake accounts and spam:
 1. Go to **Applications** → **Applications** → Select your app
 2. Add to **Allowed Callback URLs**:
    ```
-   https://indian-advocate-forum-2arp-2jjwc2368.vercel.app/api/auth/callback,
+   https://indian-advocate-forum.vercel.app/api/auth/callback,
    http://localhost:3000/api/auth/callback
    ```
 
 3. Add to **Application Login URI** (optional - for post-verification redirect):
    ```
-   https://indian-advocate-forum-2arp-2jjwc2368.vercel.app/home
+   https://indian-advocate-forum.vercel.app/home
    ```
 
 ### Step 4: Test Email Delivery
