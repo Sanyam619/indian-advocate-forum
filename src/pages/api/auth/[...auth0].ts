@@ -41,7 +41,7 @@ export default handleAuth({
             const existingUser = await Promise.race([userPromise, timeoutPromise]) as any;
 
             if (!existingUser) {
-              // Try to create a new user
+              // Try to create a new user (social login users)
               const createUserPromise = prisma.user.create({
                 data: {
                   auth0Id: session.user.sub,
@@ -49,8 +49,8 @@ export default handleAuth({
                   fullName: session.user.name || '',
                   profilePhoto: session.user.picture || '',
                   role: 'USER',
-                  isVerified: false,
-                  isProfileSetup: false  // Explicitly set to false for new users
+                  isVerified: true,  // Social login users are auto-verified
+                  isProfileSetup: false  // Will need to complete profile setup
                 }
               });
 
@@ -60,7 +60,7 @@ export default handleAuth({
                 ...session,
                 user: {
                   ...session.user,
-                  isVerified: false,
+                  isVerified: true,
                   isProfileSetup: false
                 }
               };
