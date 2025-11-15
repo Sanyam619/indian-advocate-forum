@@ -74,12 +74,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
-    console.log('✅ Database user created:', {
-      id: dbUser.id,
-      email: dbUser.email,
-      isProfileSetup: dbUser.isProfileSetup,
-      role: dbUser.role
-    });
+    if (process.env.NODE_ENV === 'development') {
+      console.log('✅ Database user created:', {
+        id: dbUser.id,
+        email: dbUser.email,
+        isProfileSetup: dbUser.isProfileSetup,
+        role: dbUser.role
+      });
+    }
 
     res.status(200).json({ 
       message: 'Test user created successfully',

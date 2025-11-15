@@ -52,7 +52,9 @@ const NewsTicker: React.FC<NewsTickerProps> = ({
         setNewsItems(data.news);
       } else {
         // If API doesn't return data, let the error handler set fallback
-        console.log('API returned success but no news data:', data);
+        if (process.env.NODE_ENV === 'development') {
+          console.log('API returned success but no news data:', data);
+        }
         throw new Error('No news data received');
       }
     } catch (err) {

@@ -262,7 +262,9 @@ export default function ProfileSetup() {
         throw new Error('Failed to save profile information');
       }
 
-      console.log('✅ Advocate status saved');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Advocate status saved');
+      }
       
       // Update userData and move to photo upload step
       setUserData({
@@ -316,7 +318,9 @@ export default function ProfileSetup() {
           throw new Error('Failed to save photo to profile');
         }
         
-        console.log('✅ Photo saved to database');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Photo saved to database');
+        }
       }
       
       // Mark profile setup as complete (isProfileSetup: true, isVerified: true)
@@ -337,7 +341,9 @@ export default function ProfileSetup() {
         throw new Error('Failed to complete profile setup');
       }
       
-      console.log('✅ Profile setup completed successfully');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Profile setup completed successfully');
+      }
       router.push('/news');
       
     } catch (error) {

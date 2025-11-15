@@ -39,7 +39,9 @@ export default async function removeAdmin(req: NextApiRequest, res: NextApiRespo
       data: { role: newRole }
     });
 
-    console.log(`🔓 ADMIN REMOVED: ${userEmail} is no longer an admin (now ${newRole})`);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🔓 ADMIN REMOVED: ${userEmail} is no longer an admin (now ${newRole})`);
+    }
 
     return res.status(200).json({ 
       message: 'Admin privileges removed successfully',

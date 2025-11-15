@@ -49,8 +49,10 @@ const AuthModal: FC<AuthModalProps> = ({ onClose }) => {
 
   const handleLogin = (connection?: string, screenHint?: string) => {
     const loginUrl = getLoginUrl(connection, screenHint);
-    console.log(`🚀 Login button clicked! Redirecting to: ${loginUrl}`);
-    console.log('Connection:', connection, 'Screen hint:', screenHint);
+    if (process.env.NODE_ENV === 'development') {
+      console.log(`🚀 Login button clicked! Redirecting to: ${loginUrl}`);
+      console.log('Connection:', connection, 'Screen hint:', screenHint);
+    }
     
     // Use window.location for more reliable redirect
     window.location.href = loginUrl;
@@ -108,7 +110,9 @@ const AuthModal: FC<AuthModalProps> = ({ onClose }) => {
             <div className="space-y-6 mt-8">
               <button
                 onClick={() => {
-                  console.log('🔴 Google login button clicked!');
+                  if (process.env.NODE_ENV === 'development') {
+                    console.log('🔴 Google login button clicked!');
+                  }
                   handleLogin("google-oauth2");
                 }}
                 disabled={isLoading}
@@ -134,7 +138,9 @@ const AuthModal: FC<AuthModalProps> = ({ onClose }) => {
 
               <button
                 onClick={() => {
-                  console.log('📧 Email login button clicked!');
+                  if (process.env.NODE_ENV === 'development') {
+                    console.log('📧 Email login button clicked!');
+                  }
                   handleLogin();
                 }}
                 disabled={isLoading}

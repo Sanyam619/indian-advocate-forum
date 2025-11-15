@@ -89,7 +89,9 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
         },
       };
     } catch (error) {
-      console.log('Database unavailable in profile, using Auth0 fallback data');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Database unavailable in profile, using Auth0 fallback data');
+      }
       
       // Fallback: Allow access with Auth0 data when database is unavailable
       return {
@@ -185,7 +187,9 @@ export default function Profile({ initialProfile }: ProfileProps) {
           
           try {
             // Upload to Cloudinary in background
-            console.log('📸 Uploading photo to Cloudinary...');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('📸 Uploading photo to Cloudinary...');
+            }
             const uploadResponse = await fetch('/api/upload-image', {
               method: 'POST',
               headers: {
@@ -199,7 +203,9 @@ export default function Profile({ initialProfile }: ProfileProps) {
             }
             
             const uploadData = await uploadResponse.json();
-            console.log('✅ Photo uploaded to Cloudinary:', uploadData.url);
+            if (process.env.NODE_ENV === 'development') {
+              console.log('✅ Photo uploaded to Cloudinary:', uploadData.url);
+            }
             
             // Store the Cloudinary URL (will be saved to DB when user clicks "Save Changes")
             setUploadedPhotoUrl(uploadData.url);
@@ -282,7 +288,9 @@ export default function Profile({ initialProfile }: ProfileProps) {
         setUploadedPhotoUrl(null); // Clear uploaded URL
         setIsEditing(false);
         
-        console.log('✅ Profile saved successfully');
+        if (process.env.NODE_ENV === 'development') {
+          console.log('✅ Profile saved successfully');
+        }
       }
     } catch (error) {
       console.error('Error updating profile:', error);

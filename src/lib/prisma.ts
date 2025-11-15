@@ -22,7 +22,9 @@ function getDatabaseUrl(): string | undefined {
     
     // Only log in development to reduce console noise
     if (process.env.NODE_ENV === 'development') {
-      console.log('Database URL validated, connecting to database:', pathname)
+      if (process.env.NODE_ENV === 'development') {
+        console.log('Database URL validated, connecting to database:', pathname)
+      }
     }
     return dbUrl
   } catch (error) {

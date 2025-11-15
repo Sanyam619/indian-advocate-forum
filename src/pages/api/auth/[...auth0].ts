@@ -13,16 +13,20 @@ export default handleAuth({
   async callback(req: NextApiRequest, res: NextApiResponse) {
     try {
       // Debug environment variables
-      console.log('NEXT_PUBLIC_BASE_URL =', process.env.NEXT_PUBLIC_BASE_URL);
-      console.log('NEXT_PUBLIC_AUTH0_DOMAIN =', process.env.NEXT_PUBLIC_AUTH0_DOMAIN);
-      console.log('Current callback URL should be:', `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log('NEXT_PUBLIC_BASE_URL =', process.env.NEXT_PUBLIC_BASE_URL);
+        console.log('NEXT_PUBLIC_AUTH0_DOMAIN =', process.env.NEXT_PUBLIC_AUTH0_DOMAIN);
+        console.log('Current callback URL should be:', `${process.env.NEXT_PUBLIC_BASE_URL}/api/auth/callback`);
+      }
       
       // Handle the standard Auth0 callback
       await handleCallback(req, res, {
         afterCallback: async (req, res, session) => {
           try {
-            console.log('Auth callback - DATABASE_URL exists:', !!process.env.DATABASE_URL)
-            console.log('Auth callback - DATABASE_URL preview:', process.env.DATABASE_URL?.substring(0, 50) + '...')
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Auth callback - DATABASE_URL exists:', !!process.env.DATABASE_URL)
+              console.log('Auth callback - DATABASE_URL preview:', process.env.DATABASE_URL?.substring(0, 50) + '...')
+            }
             
             // Add timeout for database operations
             const timeoutPromise = new Promise((_, reject) => {
@@ -70,7 +74,9 @@ export default handleAuth({
               }
             };
           } catch (error) {
-            console.log('Database unavailable in auth callback, proceeding with Auth0 session only');
+            if (process.env.NODE_ENV === 'development') {
+              console.log('Database unavailable in auth callback, proceeding with Auth0 session only');
+            }
             
             // Fallback: Allow login even when database is unavailable
             return {

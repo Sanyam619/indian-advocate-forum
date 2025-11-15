@@ -44,13 +44,17 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
 
   // Debug log for profile photo
   useEffect(() => {
-    console.log('🖼️ Layout - Profile data:', profileData);
-    console.log('🖼️ Layout - User profile photo URL:', userProfilePhoto);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🖼️ Layout - Profile data:', profileData);
+      console.log('🖼️ Layout - User profile photo URL:', userProfilePhoto);
+    }
   }, [profileData, userProfilePhoto]);
 
   // Reset image error when profile photo URL changes
   useEffect(() => {
-    console.log('🔄 Layout - Resetting image error for new photo URL:', userProfilePhoto);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔄 Layout - Resetting image error for new photo URL:', userProfilePhoto);
+    }
     setImageLoadError(false);
   }, [userProfilePhoto]);  // Handle click outside of profile menu
   useEffect(() => {
@@ -302,10 +306,14 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
                           alt="Profile" 
                           className="h-full w-full object-cover rounded-full"
                           onLoad={() => {
-                            console.log('✅ Profile image loaded successfully:', userProfilePhoto);
+                            if (process.env.NODE_ENV === 'development') {
+                              console.log('✅ Profile image loaded successfully:', userProfilePhoto);
+                            }
                           }}
                           onError={() => {
-                            console.log('❌ Profile image failed to load:', userProfilePhoto);
+                            if (process.env.NODE_ENV === 'development') {
+                              console.log('❌ Profile image failed to load:', userProfilePhoto);
+                            }
                             setImageLoadError(true);
                           }}
                         />

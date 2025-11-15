@@ -31,7 +31,9 @@ export const useRefreshRedirect = () => {
       sessionStorage.setItem('pageWasRefreshed', 'false');
     } else if (wasRefreshed === 'true') {
       // This was a refresh, redirect to news and reset the flag
-      console.log(`🔄 Page refresh detected on ${currentPath}, redirecting to news`);
+      if (process.env.NODE_ENV === 'development') {
+        console.log(`🔄 Page refresh detected on ${currentPath}, redirecting to news`);
+      }
       sessionStorage.setItem('pageWasRefreshed', 'false');
       router.replace('/news');
     }
