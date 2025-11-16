@@ -3,6 +3,9 @@
 const nextConfig = {
   reactStrictMode: true,
   trailingSlash: false,
+  images: {
+    domains: ['res.cloudinary.com', 'cloudinary.com'],
+  },
   webpack: (config, { dev, isServer }) => {
     // Disable webpack cache in development to avoid cache issues
     if (dev) {
