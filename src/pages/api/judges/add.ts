@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
 import { getSession } from '@auth0/nextjs-auth0';
-import fs from 'fs';
-import path from 'path';
+import prisma from '../../../lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -45,78 +44,59 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       });
     }
 
-    // Read current judges data with backup system
-    const judgesFilePath = path.join(process.cwd(), 'src/data/judges.json');
-    const backupFilePath = path.join(process.cwd(), 'src/data/judges.backup.json');
-    
-    // Create backup before making changes
-    if (fs.existsSync(judgesFilePath)) {
-      fs.copyFileSync(judgesFilePath, backupFilePath);
-    }
-    
-    const judgesFileContent = fs.readFileSync(judgesFilePath, 'utf8');
-    const judgesData = JSON.parse(judgesFileContent);
+    // Determine category based on targetCategory
+    let category = 'Current Judge';
+    let type = 'judge';
+    let status = 'current';
 
-    // Set default values for missing optional fields
-    const completeJudgeData = {
-      type: 'judge',
-      status: 'current',
-      dateOfBirth: '',
-      appointmentDate: '',
-      retirementDate: '',
-      education: [],
-      careerHighlights: [],
-      biography: '',
-      notableJudgments: [],
-      specializations: [],
-      ...judgeData
-    };
-
-    // Check if judge ID already exists
-    const existingJudgeInCurrent = judgesData.currentJudges.find((j: any) => j.id === judgeData.id);
-    const existingJudgeInFormer = judgesData.formerJudges?.find((j: any) => j.id === judgeData.id);
-    
-    if (existingJudgeInCurrent || existingJudgeInFormer) {
-      return res.status(400).json({ 
-        success: false, 
-        message: `Judge with ID '${judgeData.id}' already exists` 
-      });
-    }
-
-    // Add to appropriate category
     switch (targetCategory) {
       case 'currentChiefJustice':
-        judgesData.currentChiefJustice = { ...completeJudgeData, type: 'chief-justice' };
+        category = 'Current Chief Justice';
+        type = 'chief-justice';
+        status = 'current';
         break;
       case 'currentJudges':
-        judgesData.currentJudges.push(completeJudgeData);
+        category = 'Current Judge';
+        type = 'judge';
+        status = 'current';
         break;
       case 'formerChiefJustices':
-        if (!judgesData.formerChiefJustices) {
-          judgesData.formerChiefJustices = [];
-        }
-        judgesData.formerChiefJustices.push({ ...completeJudgeData, type: 'chief-justice', status: 'former' });
+        category = 'Former Chief Justice';
+        type = 'chief-justice';
+        status = 'former';
         break;
       case 'formerJudges':
-        if (!judgesData.formerJudges) {
-          judgesData.formerJudges = [];
-        }
-        judgesData.formerJudges.push({ ...completeJudgeData, status: 'former' });
+        category = 'Former Judge';
+        type = 'judge';
+        status = 'former';
         break;
       default:
-        // Default to current judges
-        judgesData.currentJudges.push(completeJudgeData);
+        category = 'Current Judge';
+        type = 'judge';
+        status = 'current';
     }
 
-    // Validate JSON structure before writing
-    if (!judgesData.currentJudges || !Array.isArray(judgesData.currentJudges)) {
-      throw new Error('Invalid judges data structure');
-    }
-
-    // Write back to file with atomic operation
-    const tempFilePath = judgesFilePath + '.tmp';
-    fs.writeFileSync(tempFilePath, JSON.stringify(judgesData, null, 2));
-    fs.renameSync(tempFilePath, judgesFilePath);
+    // Create judge in MongoDB
+    const completeJudgeData = await prisma.judge.create({
+      data: {
+        name: judgeData.name,
+        fullName: judgeData.fullName,
+        designation: judgeData.position || 'Judge',
+        court: judgeData.court || 'Supreme Court of India',
+        photoUrl: judgeData.image,
+        appointmentDate: judgeData.appointmentDate || '',
+        retirementDate: judgeData.retirementDate || '',
+        dateOfBirth: judgeData.dateOfBirth || '',
+        education: judgeData.education || [],
+        biography: judgeData.biography || '',
+        specializations: judgeData.specializations || [],
+        careerHighlights: judgeData.careerHighlights || [],
+        notableJudgments: judgeData.notableJudgments || [],
+        type,
+        status,
+        category
+      }
+    });
 
     return res.status(200).json({ 
       success: true, 

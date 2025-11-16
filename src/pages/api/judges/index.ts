@@ -1,6 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import fs from 'fs';
-import path from 'path';
+import prisma from '../../../lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'GET') {
@@ -8,21 +7,16 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   }
 
   try {
-    const judgesFilePath = path.join(process.cwd(), 'src/data/judges.json');
-    
-    if (!fs.existsSync(judgesFilePath)) {
-      return res.status(404).json({ success: false, message: 'Judges data not found' });
-    }
-
-    const judgesFileContent = fs.readFileSync(judgesFilePath, 'utf8');
-    const judgesData = JSON.parse(judgesFileContent);
-
-    // Remove the warning fields before sending to client
-    const { _warning, _lastModified, _backupLocation, ...cleanData } = judgesData;
+    // Fetch all judges from MongoDB
+    const judges = await prisma.judge.findMany({
+      orderBy: {
+        createdAt: 'desc'
+      }
+    });
 
     return res.status(200).json({ 
       success: true, 
-      data: cleanData,
+      data: judges,
       message: 'Judges data retrieved successfully'
     });
 

@@ -1,7 +1,6 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-import path from 'path';
-import fs from 'fs/promises';
 import { requireAdmin } from '../../../lib/auth-helpers';
+import prisma from '../../../lib/prisma';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'DELETE') {
@@ -19,25 +18,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Judge ID is required' });
     }
 
-    // Path to judges.json file
-    const judgesFilePath = path.join(process.cwd(), 'src', 'data', 'judges.json');
-
-    // Read current judges data
-    const judgesFileContent = await fs.readFile(judgesFilePath, 'utf8');
-    const judgesData = JSON.parse(judgesFileContent);
-
-    // Find the judge index
-    const judgeIndex = judgesData.judges.findIndex((judge: any) => judge.id === judgeId);
-
-    if (judgeIndex === -1) {
-      return res.status(404).json({ error: 'Judge not found' });
-    }
-
-    // Remove the judge
-    const deletedJudge = judgesData.judges.splice(judgeIndex, 1)[0];
-
-    // Write updated data back to file
-    await fs.writeFile(judgesFilePath, JSON.stringify(judgesData, null, 2));
+    // Delete judge from MongoDB
+    const deletedJudge = await prisma.judge.delete({
+      where: { id: judgeId }
+    });
 
     return res.status(200).json({ 
       success: true, 
@@ -46,6 +30,9 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
   } catch (error: any) {
     console.error('Delete judge error:', error);
+    if (error.code === 'P2025') {
+      return res.status(404).json({ error: 'Judge not found' });
+    }
     return res.status(500).json({ error: 'Failed to delete judge' });
   }
 }

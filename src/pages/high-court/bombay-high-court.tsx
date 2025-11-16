@@ -1,17 +1,16 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Layout from '../../components/Layout';
 import NewsList from '../../components/news/NewsList';
 import { NewsItem } from '@/types/news';
+import prisma from '@/lib/prisma';
 
-// Import Bombay High Court news data
-import bombayHighCourtData from '@/data/news/bombay-high-court.json';
+interface BombayHighCourtProps {
+  news: NewsItem[];
+}
 
-export default function BombayHighCourt({ news }: { news: NewsItem[] }) {
-  // Use pre-loaded news data
-  const bombayCourtNews = useMemo(() => {
-    return news;
-  }, [news]);
+export default function BombayHighCourt({ news }: BombayHighCourtProps) {
 
   return (
     <Layout>
@@ -48,7 +47,7 @@ export default function BombayHighCourt({ news }: { news: NewsItem[] }) {
           </div>
 
           <NewsList 
-            news={bombayCourtNews}
+            news={news}
             title="Latest Updates from Bombay High Court"
             itemsPerPage={9}
           />
@@ -58,15 +57,57 @@ export default function BombayHighCourt({ news }: { news: NewsItem[] }) {
   );
 }
 
-// Add static generation for better performance
-export async function getStaticProps() {
-  const news = bombayHighCourtData.news as NewsItem[];
-  
-  return {
-    props: {
-      news
-    },
-    // Regenerate page every hour
-    revalidate: 3600
-  };
-}
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const newsData = await prisma.news.findMany({
+      where: {
+        courtName: 'Bombay High Court',
+      },
+      orderBy: {
+        publishDate: 'desc',
+      },
+      include: {
+        author: {
+          select: {
+            fullName: true,
+            role: true,
+            profilePhoto: true,
+          },
+        },
+      },
+    });
+
+    const news = newsData.map((item) => ({
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      category: item.category,
+      publishDate: item.publishDate.toISOString(),
+      imageUrl: item.imageUrl || null,
+      videoUrl: item.videoUrl || null,
+      videoThumbnail: item.videoThumbnail || null,
+      hasVideo: item.hasVideo || false,
+      courtName: item.courtName || null,
+      tags: item.tags || [],
+      readTime: item.readTime || null,
+      author: item.author ? {
+        fullName: item.author.fullName,
+        role: item.author.role,
+        profilePhoto: item.author.profilePhoto,
+      } : null,
+    }));
+
+    return {
+      props: {
+        news,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching Bombay High Court news:', error);
+    return {
+      props: {
+        news: [],
+      },
+    };
+  }
+};

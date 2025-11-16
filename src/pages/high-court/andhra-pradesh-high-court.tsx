@@ -1,11 +1,16 @@
 import React from 'react';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Layout from '../../components/Layout';
 import { NewsItem } from "../../types/news";
 import NewsList from '../../components/news/NewsList';
-import newsData from '../../data/news/andhra-pradesh-high-court.json';
+import prisma from '@/lib/prisma';
 
-export default function AndhraPradeshHighCourt() {
+interface Props {
+  news: NewsItem[];
+}
+
+export default function AndhraPradeshHighCourt({ news }: Props) {
   return (
     <Layout>
       <Head>
@@ -34,7 +39,7 @@ export default function AndhraPradeshHighCourt() {
           </div>
 
           <NewsList 
-            news={newsData.news as NewsItem[]}
+            news={news}
             title="Latest Updates from Andhra Pradesh High Court"
           />
         </div>
@@ -42,3 +47,25 @@ export default function AndhraPradeshHighCourt() {
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    const newsData = await prisma.news.findMany({
+      where: { courtName: 'Andhra Pradesh High Court' },
+      orderBy: { publishDate: 'desc' },
+      include: { author: { select: { fullName: true, role: true, profilePhoto: true } } }
+    });
+    const news = newsData.map((item) => ({
+      id: item.id, title: item.title, content: item.content, category: item.category,
+      publishDate: item.publishDate.toISOString(), imageUrl: item.imageUrl || null,
+      videoUrl: item.videoUrl || null, videoThumbnail: item.videoThumbnail || null,
+      hasVideo: item.hasVideo || false, courtName: item.courtName || null,
+      tags: item.tags || [], readTime: item.readTime || null,
+      author: item.author ? { fullName: item.author.fullName, role: item.author.role, profilePhoto: item.author.profilePhoto } : null
+    }));
+    return { props: { news } };
+  } catch (error) {
+    console.error('Error fetching Andhra Pradesh High Court news:', error);
+    return { props: { news: [] } };
+  }
+};

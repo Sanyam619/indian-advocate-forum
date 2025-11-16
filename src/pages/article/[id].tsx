@@ -1,35 +1,14 @@
 import React from 'react';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
 import { NewsItem } from '@/types/news';
 import { Calendar, Clock, ArrowLeft, Tag } from 'lucide-react';
+import prisma from '@/lib/prisma';
 
 interface ArticlePageProps {
-  article: NewsItem;
-}
-
-// Helper function to load news data
-async function loadAllNewsData() {
-  const [
-    supremeCourtData,
-    delhiHighCourtData,
-    bombayHighCourtData,
-    calcuttaHighCourtData
-  ] = await Promise.all([
-    import('@/data/news/supreme-court.json'),
-    import('@/data/news/delhi-high-court.json'),
-    import('@/data/news/bombay-high-court.json'),
-    import('@/data/news/calcutta-high-court.json')
-  ]);
-
-  return [
-    ...(supremeCourtData.default.news as NewsItem[]),
-    ...(delhiHighCourtData.default.news as NewsItem[]),
-    ...(bombayHighCourtData.default.news as NewsItem[]),
-    ...(calcuttaHighCourtData.default.news as NewsItem[])
-  ];
+  article: NewsItem | null;
 }
 
 const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
@@ -219,41 +198,62 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
   );
 };
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  // Load all news data dynamically
-  const allNews = await loadAllNewsData();
-
-  // Generate paths for all articles
-  const paths = allNews.map((article) => ({
-    params: { id: article.id }
-  }));
-
-  return {
-    paths,
-    fallback: 'blocking'
-  };
-};
-
-export const getStaticProps: GetStaticProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const articleId = params?.id as string;
 
-  // Load all news data dynamically
-  const allNews = await loadAllNewsData();
+  try {
+    // Fetch the specific article from MongoDB
+    const article = await prisma.news.findUnique({
+      where: { id: articleId },
+      include: {
+        author: {
+          select: {
+            fullName: true,
+            role: true,
+            profilePhoto: true,
+          },
+        },
+      },
+    });
 
-  // Find the specific article
-  const article = allNews.find((item) => item.id === articleId);
+    if (!article) {
+      return {
+        notFound: true,
+      };
+    }
 
-  if (!article) {
+    // Convert to plain object and format dates
+    const formattedArticle = {
+      id: article.id,
+      title: article.title,
+      content: article.content,
+      category: article.category,
+      publishDate: article.publishDate.toISOString(),
+      imageUrl: article.imageUrl || null,
+      videoUrl: article.videoUrl || null,
+      videoThumbnail: article.videoThumbnail || null,
+      hasVideo: article.hasVideo || false,
+      courtName: article.courtName || null,
+      tags: article.tags || [],
+      readTime: article.readTime || null,
+      author: article.author ? {
+        fullName: article.author.fullName,
+        role: article.author.role,
+        profilePhoto: article.author.profilePhoto,
+      } : null,
+    };
+
     return {
-      notFound: true
+      props: {
+        article: formattedArticle,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching article:', error);
+    return {
+      notFound: true,
     };
   }
-
-  return {
-    props: {
-      article
-    }
-  };
 };
 
 export default ArticlePage;

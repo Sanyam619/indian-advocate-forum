@@ -1,23 +1,21 @@
 import React from 'react';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import prisma from '@/lib/prisma';
 
-// Import all High Courts news data for article counts
-import delhiHighCourtData from '@/data/news/delhi-high-court.json';
-import bombayHighCourtData from '@/data/news/bombay-high-court.json';
-import calcuttaHighCourtData from '@/data/news/calcutta-high-court.json';
-import allahabadHighCourtData from '@/data/news/allahabad-high-court.json';
-import andhraPradeshHighCourtData from '@/data/news/andhra-pradesh-high-court.json';
-import gujaratHighCourtData from '@/data/news/gujarat-high-court.json';
+interface HighCourtProps {
+  courtCounts: { [key: string]: number };
+}
 
-export default function HighCourt() {
+export default function HighCourt({ courtCounts }: HighCourtProps) {
   const highCourts = [
     {
       name: 'Allahabad High Court',
       path: '/high-court/allahabad-high-court',
       description: 'Latest updates from Allahabad High Court - Uttar Pradesh',
-      newsCount: allahabadHighCourtData.news.length,
+      newsCount: courtCounts['Allahabad High Court'] || 0,
       established: '1866',
       jurisdiction: 'Uttar Pradesh'
     },
@@ -25,7 +23,7 @@ export default function HighCourt() {
       name: 'Andhra Pradesh High Court',
       path: '/high-court/andhra-pradesh-high-court',
       description: 'Latest updates from Andhra Pradesh High Court',
-      newsCount: andhraPradeshHighCourtData.news.length,
+      newsCount: courtCounts['Andhra Pradesh High Court'] || 0,
       established: '2014',
       jurisdiction: 'Andhra Pradesh'
     },
@@ -33,7 +31,7 @@ export default function HighCourt() {
       name: 'Bombay High Court', 
       path: '/high-court/bombay-high-court',
       description: 'Latest updates from Bombay High Court - Maharashtra, Goa, Dadra & Nagar Haveli',
-      newsCount: bombayHighCourtData.news.length,
+      newsCount: courtCounts['Bombay High Court'] || 0,
       established: '1862',
       jurisdiction: 'Maharashtra, Goa'
     },
@@ -41,7 +39,7 @@ export default function HighCourt() {
       name: 'Calcutta High Court',
       path: '/high-court/calcutta-high-court', 
       description: 'Latest updates from Calcutta High Court - West Bengal',
-      newsCount: calcuttaHighCourtData.news.length,
+      newsCount: courtCounts['Calcutta High Court'] || 0,
       established: '1862',
       jurisdiction: 'West Bengal'
     },
@@ -49,7 +47,7 @@ export default function HighCourt() {
       name: 'Delhi High Court',
       path: '/high-court/delhi-high-court',
       description: 'Latest updates from Delhi High Court - National Capital Territory',
-      newsCount: delhiHighCourtData.news.length,
+      newsCount: courtCounts['Delhi High Court'] || 0,
       established: '1966',
       jurisdiction: 'Delhi'
     },
@@ -57,7 +55,7 @@ export default function HighCourt() {
       name: 'Gujarat High Court',
       path: '/high-court/gujarat-high-court',
       description: 'Latest updates from Gujarat High Court',
-      newsCount: gujaratHighCourtData.news.length,
+      newsCount: courtCounts['Gujarat High Court'] || 0,
       established: '1960',
       jurisdiction: 'Gujarat'
     }
@@ -108,3 +106,41 @@ export default function HighCourt() {
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    // Get counts for each high court
+    const courtNames = [
+      'Allahabad High Court',
+      'Andhra Pradesh High Court',
+      'Bombay High Court',
+      'Calcutta High Court',
+      'Delhi High Court',
+      'Gujarat High Court'
+    ];
+
+    const courtCounts: { [key: string]: number } = {};
+    
+    await Promise.all(
+      courtNames.map(async (courtName) => {
+        const count = await prisma.news.count({
+          where: { courtName }
+        });
+        courtCounts[courtName] = count;
+      })
+    );
+
+    return {
+      props: {
+        courtCounts,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching court counts:', error);
+    return {
+      props: {
+        courtCounts: {},
+      },
+    };
+  }
+};

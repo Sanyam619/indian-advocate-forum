@@ -1,20 +1,16 @@
-import React, { useMemo } from 'react';
+import React from 'react';
+import { GetServerSideProps } from 'next';
 import Layout from '../../components/Layout';
 import Head from 'next/head';
 import NewsList from '../../components/news/NewsList';
 import { NewsItem } from '@/types/news';
+import prisma from '@/lib/prisma';
 
-// Import Supreme Court news data
-import supremeCourtData from '@/data/news/supreme-court.json';
+interface SupremeCourtJudgementsProps {
+  supremeCourtNews: NewsItem[];
+}
 
-export default function SupremeCourtJudgements() {
-  // Filter Supreme Court news for judgments and related content
-  const supremeCourtNews = useMemo(() => {
-    return (supremeCourtData.news as NewsItem[]).filter(news => 
-      news.courtType === 'supreme' && 
-      (news.category === 'Judgment' || news.category === 'Supreme Court')
-    );
-  }, []);
+export default function SupremeCourtJudgements({ supremeCourtNews }: SupremeCourtJudgementsProps) {
 
   return (
     <Layout>
@@ -48,3 +44,63 @@ export default function SupremeCourtJudgements() {
     </Layout>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async () => {
+  try {
+    // Fetch Supreme Court news from MongoDB
+    const news = await prisma.news.findMany({
+      where: {
+        OR: [
+          { courtName: 'Supreme Court of India' },
+          { category: 'Supreme Court' },
+          { category: 'Judgment' }
+        ]
+      },
+      orderBy: {
+        publishDate: 'desc',
+      },
+      include: {
+        author: {
+          select: {
+            fullName: true,
+            role: true,
+            profilePhoto: true,
+          },
+        },
+      },
+    });
+
+    const supremeCourtNews = news.map((item) => ({
+      id: item.id,
+      title: item.title,
+      content: item.content,
+      category: item.category,
+      publishDate: item.publishDate.toISOString(),
+      imageUrl: item.imageUrl || null,
+      videoUrl: item.videoUrl || null,
+      videoThumbnail: item.videoThumbnail || null,
+      hasVideo: item.hasVideo || false,
+      courtName: item.courtName || null,
+      tags: item.tags || [],
+      readTime: item.readTime || null,
+      author: item.author ? {
+        fullName: item.author.fullName,
+        role: item.author.role,
+        profilePhoto: item.author.profilePhoto,
+      } : null,
+    }));
+
+    return {
+      props: {
+        supremeCourtNews,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching Supreme Court news:', error);
+    return {
+      props: {
+        supremeCourtNews: [],
+      },
+    };
+  }
+};

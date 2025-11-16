@@ -62,6 +62,9 @@ model News {
   videoUrl    String?
   videoThumbnail String?
   category    String
+  courtName   String?
+  tags        String[] @default([])
+  readTime    Int?
   author      User     @relation(fields: [authorId], references: [id])
   authorId    String   @db.ObjectId
   publishDate DateTime @default(now())
@@ -113,4 +116,26 @@ model Podcast {
   playCount   Int      @default(0)
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
+}
+
+model Judge {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  name            String
+  fullName        String
+  designation     String
+  court           String
+  photoUrl        String?
+  appointmentDate String?
+  retirementDate  String?
+  dateOfBirth     String?
+  education       String[] @default([])
+  biography       String?
+  specializations String[] @default([])
+  careerHighlights String[] @default([])
+  notableJudgments String[] @default([])
+  type            String   // "chief-justice" or "judge"
+  status          String   // "current" or "former"
+  category        String?  // "Current Chief Justice", "Current Judge", "Former Chief Justice", "Former Judge"
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }

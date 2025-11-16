@@ -1,10 +1,5 @@
 import { NextApiRequest, NextApiResponse } from 'next';
-
-// Import static news data as fallback
-import supremeCourtData from '../../../data/news/supreme-court.json';
-import delhiHighCourtData from '../../../data/news/delhi-high-court.json';
-import bombayHighCourtData from '../../../data/news/bombay-high-court.json';
-import calcuttaHighCourtData from '../../../data/news/calcutta-high-court.json';
+import prisma from '../../../lib/prisma';
 
 interface NewsItem {
   id: string;
@@ -12,88 +7,6 @@ interface NewsItem {
   publishDate: string;
   category: string;
   courtName?: string;
-}
-
-// Cache for fallback news data
-let cachedFallbackNews: NewsItem[] | null = null;
-let cacheTimestamp: number = 0;
-const CACHE_DURATION = 60000; // 1 minute cache
-
-// Fallback function using static data
-function getFallbackRecentNews(limit: number = 10) {
-  const now = Date.now();
-  
-  // Check if we have cached data that's still valid
-  if (cachedFallbackNews && (now - cacheTimestamp) < CACHE_DURATION) {
-    const sortedNews = cachedFallbackNews
-      .slice(0, limit)
-      .map(item => ({
-        id: item.id,
-        title: item.title,
-        publishDate: item.publishDate,
-        category: item.category || 'Legal News',
-        author: 'Indian Advocate Forum',
-        slug: item.id
-      }));
-    return sortedNews;
-  }
-
-  if (process.env.NODE_ENV === 'development') {
-    console.log('📰 Loading fallback news data...');
-  }
-  try {
-    const allNews: NewsItem[] = [
-      ...(supremeCourtData.news as NewsItem[]),
-      ...(delhiHighCourtData.news as NewsItem[]),
-      ...(bombayHighCourtData.news as NewsItem[]),
-      ...(calcuttaHighCourtData.news as NewsItem[])
-    ];
-    
-    // Cache the processed news data
-    cachedFallbackNews = allNews.sort((a, b) => new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime());
-    cacheTimestamp = now;
-    
-    if (process.env.NODE_ENV === 'development') {
-      console.log('📊 Total static news items loaded and cached:', allNews.length);
-    }
-
-    const sortedNews = cachedFallbackNews
-      .slice(0, limit)
-      .map(item => ({
-        id: item.id,
-        title: item.title,
-        publishDate: item.publishDate,
-        category: item.category || 'Legal News',
-        author: 'Indian Advocate Forum',
-        slug: item.id
-      }));
-
-    if (process.env.NODE_ENV === 'development') {
-      console.log(`✅ Returning ${sortedNews.length} fallback news items`);
-    }
-    return sortedNews;
-  } catch (error) {
-    console.error('Error processing fallback data:', error);
-    // Return hardcoded fallback if JSON files fail
-    return [
-      {
-        id: 'fallback-1',
-        title: 'Supreme Court Delivers Landmark Judgment on Environmental Protection',
-        publishDate: '2025-09-28T10:30:00Z',
-        category: 'Supreme Court',
-        author: 'News Team',
-        slug: 'fallback-1'
-      },
-      {
-        id: 'fallback-2',
-        title: 'Delhi High Court Expedites Digital Transaction Dispute Cases',
-        publishDate: '2025-09-27T14:15:00Z',
-        category: 'Delhi High Court',
-        author: 'News Team',
-        slug: 'fallback-2'
-      }
-    ];
-  }
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -104,18 +17,45 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   const { limit = '10' } = req.query;
   const newsLimit = parseInt(limit as string, 10);
 
-  if (process.env.NODE_ENV === 'development') {
-    console.log('📰 Loading recent news from static JSON files...');
+  try {
+    // Fetch recent news from MongoDB
+    const news = await prisma.news.findMany({
+      take: newsLimit,
+      orderBy: {
+        publishDate: 'desc',
+      },
+      select: {
+        id: true,
+        title: true,
+        publishDate: true,
+        category: true,
+        courtName: true,
+      },
+    });
+
+    // Format the response
+    const recentNews = news.map(item => ({
+      id: item.id,
+      title: item.title,
+      publishDate: item.publishDate.toISOString(),
+      category: item.category || 'Legal News',
+      courtName: item.courtName || undefined,
+      slug: item.id,
+    }));
+
+    return res.status(200).json({
+      success: true,
+      count: recentNews.length,
+      news: recentNews,
+      source: 'database',
+      message: 'News loaded from MongoDB'
+    });
+  } catch (error) {
+    console.error('Error fetching recent news:', error);
+    return res.status(500).json({
+      success: false,
+      message: 'Error fetching news from database',
+      news: []
+    });
   }
-  
-  // Always use static JSON files for news data
-  const recentNews = getFallbackRecentNews(newsLimit);
-  
-  return res.status(200).json({
-    success: true,
-    count: recentNews.length,
-    news: recentNews,
-    source: 'static-files',
-    message: 'News loaded from court JSON files'
-  });
 }
