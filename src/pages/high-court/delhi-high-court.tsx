@@ -49,7 +49,6 @@ export default function DelhiHighCourt({ news }: DelhiHighCourtProps) {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  }
   try {
     const newsData = await prisma.news.findMany({
       where: {
