@@ -257,11 +257,6 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const judgeId = params?.id as string;
 
   try {
-    // Check if Prisma is available
-    if (!prisma) {
-      return { notFound: true };
-    }
-
     // Fetch the specific judge from MongoDB
     const judge = await prisma.judge.findUnique({
       where: { id: judgeId },

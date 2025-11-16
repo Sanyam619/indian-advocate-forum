@@ -53,8 +53,6 @@ export default function PunjabHaryanaHighCourt({ news }: Props) {
 }
 
 export const getServerSideProps: GetServerSideProps = async () => {
-  if (!prisma) {
-    return { props: { news: [] } };
   }
   try {
     const newsData = await prisma.news.findMany({
