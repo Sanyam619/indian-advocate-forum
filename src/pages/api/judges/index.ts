@@ -8,15 +8,33 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
   try {
     // Fetch all judges from MongoDB
-    const judges = await prisma.judge.findMany({
+    const allJudges = await prisma.judge.findMany({
       orderBy: {
         createdAt: 'desc'
       }
     });
 
+    // Group judges by category
+    const currentChiefJustice = allJudges.find((j: any) => j.category === 'Current Chief Justice');
+    const currentJudges = allJudges.filter((j: any) => j.category === 'Current Judge');
+    const formerChiefJustices = allJudges.filter((j: any) => j.category === 'Former Chief Justice');
+    const formerJudges = allJudges.filter((j: any) => j.category === 'Former Judge');
+
+    // Format judges for frontend (map photoUrl to image field for backwards compatibility)
+    const formatJudge = (judge: any) => ({
+      ...judge,
+      image: judge.photoUrl,
+      position: judge.designation,
+    });
+
     return res.status(200).json({ 
       success: true, 
-      data: judges,
+      data: {
+        currentChiefJustice: currentChiefJustice ? formatJudge(currentChiefJustice) : null,
+        currentJudges: currentJudges.map(formatJudge),
+        formerChiefJustices: formerChiefJustices.map(formatJudge),
+        formerJudges: formerJudges.map(formatJudge),
+      },
       message: 'Judges data retrieved successfully'
     });
 

@@ -70,7 +70,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       },
     });
 
-    const supremeCourtNews = news.map((item) => ({
+    const supremeCourtNews = news.map((item: any) => ({
       id: item.id,
       title: item.title,
       content: item.content,

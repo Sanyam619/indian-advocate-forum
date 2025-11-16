@@ -73,7 +73,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         },
       });
 
-      const formattedNews = news.map(item => ({
+      const formattedNews = news.map((item: any) => ({
         id: item.id,
         title: item.title,
         content: item.content,
@@ -112,7 +112,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       },
     });
 
-    const formattedNews = news.map(item => ({
+    const formattedNews = news.map((item: any) => ({
       id: item.id,
       title: item.title,
       content: item.content,

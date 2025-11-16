@@ -64,7 +64,7 @@ export const getServerSideProps: GetServerSideProps = async () => {
       orderBy: { publishDate: 'desc' },
       include: { author: { select: { fullName: true, role: true, profilePhoto: true } } }
     });
-    const news = newsData.map((item) => ({
+    const news = newsData.map((item: any) => ({
       id: item.id, title: item.title, content: item.content, category: item.category,
       publishDate: item.publishDate.toISOString(), imageUrl: item.imageUrl || null,
       videoUrl: item.videoUrl || null, videoThumbnail: item.videoThumbnail || null,

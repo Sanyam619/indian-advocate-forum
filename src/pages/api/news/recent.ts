@@ -34,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
 
     // Format the response
-    const recentNews = news.map(item => ({
+    const recentNews = news.map((item: any) => ({
       id: item.id,
       title: item.title,
       publishDate: item.publishDate.toISOString(),

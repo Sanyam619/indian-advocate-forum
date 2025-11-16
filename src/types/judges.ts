@@ -3,6 +3,7 @@ export interface Judge {
   name: string;
   fullName: string;
   position: string;
+  designation?: string;
   type: string;
   status: string;
   dateOfBirth: string;
@@ -13,6 +14,7 @@ export interface Judge {
     end: string;
   };
   image: string;
+  photoUrl?: string;
   education?: string[];
   careerHighlights?: string[];
   biography: string;

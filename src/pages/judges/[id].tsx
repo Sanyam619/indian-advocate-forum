@@ -1,10 +1,10 @@
 import React from 'react';
-import { GetStaticPaths, GetStaticProps } from 'next';
+import { GetServerSideProps } from 'next';
 import Head from 'next/head';
 import Image from 'next/image';
 import Layout from '../../components/Layout';
 import { Judge } from '../../types/judges';
-import judgesData from '../../data/judges.json';
+import prisma from '../../lib/prisma';
 import { CalendarDays, Scale, GraduationCap, Award, BookOpen, MapPin, Clock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
 
@@ -95,7 +95,7 @@ export default function JudgeProfile({ judge }: JudgeProfileProps) {
                 <div className="flex-shrink-0">
                   <div className="w-64 h-80 rounded-xl overflow-hidden bg-gray-200 mx-auto lg:mx-0 shadow-lg">
                     <Image
-                      src={judge.image || '/images/placeholder-judge.jpg'}
+                      src={judge.photoUrl || judge.image || '/images/placeholder-judge.jpg'}
                       alt={judge.name}
                       width={256}
                       height={320}
@@ -115,7 +115,7 @@ export default function JudgeProfile({ judge }: JudgeProfileProps) {
                       {judge.name}
                     </h1>
                     <h2 className="text-xl md:text-2xl font-semibold text-gray-700 mb-4">
-                      {judge.position}
+                      {judge.designation || judge.position}
                     </h2>
                     <div className={`inline-flex items-center px-4 py-2 rounded-full text-sm font-medium ${
                       judge.status === 'current' 
@@ -176,7 +176,7 @@ export default function JudgeProfile({ judge }: JudgeProfileProps) {
             <div className="p-8">
               <h3 className="text-2xl font-bold text-gray-900 mb-4">Biography</h3>
               <p className="text-gray-700 leading-relaxed text-lg">
-                {judge.biography}
+                {judge.biography || 'Biography information not available.'}
               </p>
             </div>
           </div>
@@ -253,43 +253,51 @@ export default function JudgeProfile({ judge }: JudgeProfileProps) {
   );
 }
 
-export const getStaticPaths: GetStaticPaths = async () => {
-  const allJudges = [
-    judgesData.currentChiefJustice,
-    ...judgesData.currentJudges,
-    ...judgesData.formerChiefJustices,
-    ...judgesData.formerJudges
-  ];
+export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+  const judgeId = params?.id as string;
 
-  const paths = allJudges.map((judge) => ({
-    params: { id: judge.id }
-  }));
+  try {
+    // Fetch the specific judge from MongoDB
+    const judge = await prisma.judge.findUnique({
+      where: { id: judgeId },
+    });
 
-  return {
-    paths,
-    fallback: false
-  };
-};
+    if (!judge) {
+      return {
+        notFound: true,
+      };
+    }
 
-export const getStaticProps: GetStaticProps = async ({ params }) => {
-  const allJudges = [
-    judgesData.currentChiefJustice,
-    ...judgesData.currentJudges,
-    ...judgesData.formerChiefJustices,
-    ...judgesData.formerJudges
-  ];
+    // Map MongoDB judge to expected Judge type
+    const formattedJudge = {
+      id: judge.id,
+      name: judge.name,
+      fullName: judge.fullName,
+      position: judge.designation,
+      designation: judge.designation,
+      type: judge.type,
+      status: judge.status,
+      dateOfBirth: judge.dateOfBirth || '',
+      appointmentDate: judge.appointmentDate || '',
+      retirementDate: judge.retirementDate || '',
+      image: judge.photoUrl || '',
+      photoUrl: judge.photoUrl || '',
+      education: judge.education || [],
+      careerHighlights: judge.careerHighlights || [],
+      biography: judge.biography || '',
+      notableJudgments: judge.notableJudgments || [],
+      specializations: judge.specializations || [],
+    };
 
-  const judge = allJudges.find((j) => j.id === params?.id);
-
-  if (!judge) {
     return {
-      notFound: true
+      props: {
+        judge: formattedJudge,
+      },
+    };
+  } catch (error) {
+    console.error('Error fetching judge:', error);
+    return {
+      notFound: true,
     };
   }
-
-  return {
-    props: {
-      judge
-    }
-  };
 };
