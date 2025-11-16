@@ -43,6 +43,11 @@ export default function News({ allNews }: NewsPageProps) {
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
+    // Check if Prisma is available
+    if (!prisma) {
+      return { props: { allNews: [] } };
+    }
+
     // Fetch all news from MongoDB, sorted by publish date
     const news = await prisma.news.findMany({
       orderBy: {

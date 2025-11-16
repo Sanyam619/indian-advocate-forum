@@ -47,6 +47,11 @@ export default function SupremeCourtJudgements({ supremeCourtNews }: SupremeCour
 
 export const getServerSideProps: GetServerSideProps = async () => {
   try {
+    // Check if Prisma is available
+    if (!prisma) {
+      return { props: { supremeCourtNews: [] } };
+    }
+
     // Fetch Supreme Court news from MongoDB
     const news = await prisma.news.findMany({
       where: {

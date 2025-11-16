@@ -202,6 +202,14 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
   const articleId = params?.id as string;
 
   try {
+    // Check if Prisma is available
+    if (!prisma) {
+      console.error('Prisma client not initialized');
+      return {
+        notFound: true,
+      };
+    }
+
     // Fetch the specific article from MongoDB
     const article = await prisma.news.findUnique({
       where: { id: articleId },
