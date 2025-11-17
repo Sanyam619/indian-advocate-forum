@@ -12,7 +12,6 @@ interface Advocate {
   city: string;
   specialization: string | string[];
   phoneNumber?: string;
-  isVerified: boolean;
 }
 
 interface AdvocateSearchProps {
@@ -196,11 +195,6 @@ Thank you,
                     <div className="flex-1">
                       <h3 className="font-semibold text-gray-900">
                         Adv. {advocate.fullName}
-                        {advocate.isVerified && (
-                          <span className="ml-2 inline-flex items-center px-2 py-0.5 rounded text-xs font-medium bg-green-100 text-green-800">
-                            ✓ Verified
-                          </span>
-                        )}
                       </h3>
                       {/* Specialization Tags */}
                       {advocate.specialization && Array.isArray(advocate.specialization) && advocate.specialization.length > 0 ? (

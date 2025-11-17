@@ -49,7 +49,6 @@ export default handleAuth({
                   fullName: session.user.name || '',
                   profilePhoto: session.user.picture || '',
                   role: 'USER',
-                  isVerified: true,  // Social login users are auto-verified
                   isProfileSetup: false  // Will need to complete profile setup
                 }
               });
@@ -60,7 +59,6 @@ export default handleAuth({
                 ...session,
                 user: {
                   ...session.user,
-                  isVerified: true,
                   isProfileSetup: false
                 }
               };
@@ -69,8 +67,7 @@ export default handleAuth({
             return {
               ...session,
               user: {
-                ...session.user,
-                isVerified: existingUser.isVerified
+                ...session.user
               }
             };
           } catch (error) {
@@ -82,8 +79,7 @@ export default handleAuth({
             return {
               ...session,
               user: {
-                ...session.user,
-                isVerified: true // Allow access when DB is unavailable
+                ...session.user
               }
             };
           }

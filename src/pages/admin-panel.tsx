@@ -56,6 +56,17 @@ interface Judge {
   appointmentDate?: string;
 }
 
+interface TeamMember {
+  id: string;
+  name: string;
+  role: string;
+  references?: string;
+  emailId: string;
+  phoneNo?: string;
+  placeOfPractice?: string;
+  profilePhoto?: string;
+}
+
 interface AdminPanelProps {
   adminUser: {
     email: string;
@@ -172,6 +183,7 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
   const [news, setNews] = useState<News[]>([]);
   const [podcasts, setPodcasts] = useState<Podcast[]>([]);
   const [judges, setJudges] = useState<Judge[]>([]);
+  const [teamMembers, setTeamMembers] = useState<TeamMember[]>([]);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('info');
   const [loading, setLoading] = useState(false);
@@ -180,6 +192,7 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
   const [showNewsList, setShowNewsList] = useState(false);
   const [showPodcastsList, setShowPodcastsList] = useState(false);
   const [showJudgesList, setShowJudgesList] = useState(false);
+  const [showTeamMembersList, setShowTeamMembersList] = useState(false);
 
   const showMessage = (text: string, type: 'success' | 'error' | 'info') => {
     setMessage(text);
@@ -483,6 +496,65 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
         showMessage(`✅ Judge deleted successfully`, 'success');
         // Refresh the judges list
         listAllJudges();
+      } else {
+        showMessage(`❌ ERROR: ${data.error}`, 'error');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      showMessage(`❌ NETWORK ERROR: Failed to connect to server`, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const listAllTeamMembers = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('/api/admin/list-team-members', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        }
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setTeamMembers(data.teamMembers);
+        setShowTeamMembersList(true);
+        showMessage(`✅ Found ${data.teamMembers.length} team members`, 'success');
+      } else {
+        showMessage(`❌ ERROR: ${data.error}`, 'error');
+      }
+    } catch (error) {
+      console.error('Network error:', error);
+      showMessage(`❌ NETWORK ERROR: Failed to connect to server`, 'error');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const deleteTeamMember = async (teamMemberId: string, name: string) => {
+    if (!confirm(`Are you sure you want to delete team member ${name}?`)) {
+      return;
+    }
+
+    setLoading(true);
+    try {
+      const response = await fetch('/api/admin/delete-team-member', {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ teamMemberId })
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        showMessage(`✅ Team member deleted successfully`, 'success');
+        // Refresh the team members list
+        listAllTeamMembers();
       } else {
         showMessage(`❌ ERROR: ${data.error}`, 'error');
       }
@@ -854,6 +926,182 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
         )}
       </div>
 
+      {/* Team Member Management Section */}
+      <div style={{ 
+        marginBottom: '30px', 
+        padding: '25px', 
+        backgroundColor: 'rgba(255, 255, 255, 0.95)', 
+        backdropFilter: 'blur(10px)',
+        border: '1px solid rgba(255, 255, 255, 0.2)', 
+        borderRadius: '12px',
+        boxShadow: '0 8px 32px rgba(0, 0, 0, 0.1)'
+      }}>
+        <h2 style={{ 
+          color: '#dc2626', 
+          fontSize: '24px', 
+          fontWeight: '700',
+          marginBottom: '8px',
+          textShadow: '0 2px 4px rgba(0, 0, 0, 0.1)'
+        }}>👥 Team Member Management</h2>
+        <p style={{ 
+          color: '#6b7280', 
+          fontSize: '16px', 
+          marginBottom: '25px',
+          lineHeight: '1.5'
+        }}>Add, view, and delete team members (President, Director General, etc.)</p>
+        
+        <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap' }}>
+          <button
+            onClick={() => router.push(`/admin/add-team-member`)}
+            style={{
+              backgroundColor: '#dc2626',
+              color: 'white',
+              padding: '14px 28px',
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(220, 38, 38, 0.3)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+            onMouseEnter={(e) => {
+              const target = e.target as HTMLButtonElement;
+              target.style.backgroundColor = '#b91c1c';
+              target.style.transform = 'translateY(-2px)';
+              target.style.boxShadow = '0 6px 20px rgba(220, 38, 38, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              const target = e.target as HTMLButtonElement;
+              target.style.backgroundColor = '#dc2626';
+              target.style.transform = 'translateY(0)';
+              target.style.boxShadow = '0 4px 15px rgba(220, 38, 38, 0.3)';
+            }}
+          >
+            Add New Team Member
+          </button>
+
+          <button
+            onClick={() => listAllTeamMembers()}
+            style={{
+              backgroundColor: '#2563eb',
+              color: 'white',
+              padding: '14px 28px',
+              border: 'none',
+              borderRadius: '10px',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              boxShadow: '0 4px 15px rgba(37, 99, 235, 0.3)',
+              transition: 'all 0.3s ease',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '8px'
+            }}
+            onMouseEnter={(e) => {
+              const target = e.target as HTMLButtonElement;
+              target.style.backgroundColor = '#1d4ed8';
+              target.style.transform = 'translateY(-2px)';
+              target.style.boxShadow = '0 6px 20px rgba(37, 99, 235, 0.4)';
+            }}
+            onMouseLeave={(e) => {
+              const target = e.target as HTMLButtonElement;
+              target.style.backgroundColor = '#2563eb';
+              target.style.transform = 'translateY(0)';
+              target.style.boxShadow = '0 4px 15px rgba(37, 99, 235, 0.3)';
+            }}
+          >
+            View All Team Members
+          </button>
+        </div>
+
+        {/* Team Members List */}
+        {showTeamMembersList && teamMembers.length > 0 && (
+          <div style={{ marginTop: '20px' }}>
+            <h3 style={{ color: '#374151', marginBottom: '15px', fontSize: '18px' }}>All Team Members ({teamMembers.length} total):</h3>
+            <div style={{ maxHeight: '500px', overflowY: 'auto', border: '1px solid #e5e7eb', borderRadius: '6px' }}>
+              {teamMembers.map((member, index) => (
+                <div key={member.id} style={{
+                  padding: '15px',
+                  borderBottom: index < teamMembers.length - 1 ? '1px solid #e5e7eb' : 'none',
+                  backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9fafb',
+                  display: 'flex',
+                  justifyContent: 'space-between',
+                  alignItems: 'center'
+                }}>
+                  <div style={{ flex: 1 }}>
+                    <div style={{ marginBottom: '8px' }}>
+                      <strong style={{ color: '#111827', fontSize: '16px' }}>{member.name}</strong>
+                      {member.role && (
+                        <span style={{
+                          marginLeft: '10px',
+                          padding: '2px 10px',
+                          borderRadius: '12px',
+                          fontSize: '12px',
+                          fontWeight: 'bold',
+                          backgroundColor: member.role === 'President' ? '#fee2e2' : '#dbeafe',
+                          color: member.role === 'President' ? '#991b1b' : '#1e40af'
+                        }}>
+                          {member.role}
+                        </span>
+                      )}
+                    </div>
+                    <div style={{ fontSize: '14px', color: '#6b7280' }}>
+                      {member.references && (
+                        <div style={{ marginBottom: '4px' }}>
+                          <strong>Position:</strong> {member.references}
+                        </div>
+                      )}
+                      <div style={{ marginBottom: '4px' }}>
+                        <strong>Email:</strong> {member.emailId}
+                      </div>
+                      {member.phoneNo && (
+                        <div style={{ marginBottom: '4px' }}>
+                          <strong>Phone:</strong> {member.phoneNo}
+                        </div>
+                      )}
+                      {member.placeOfPractice && (
+                        <div style={{ marginBottom: '4px' }}>
+                          <strong>Place of Practice:</strong> {member.placeOfPractice}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <button
+                    onClick={() => deleteTeamMember(member.id, member.name)}
+                    style={{
+                      backgroundColor: '#ef4444',
+                      color: 'white',
+                      padding: '8px 16px',
+                      border: 'none',
+                      borderRadius: '6px',
+                      fontSize: '14px',
+                      fontWeight: '600',
+                      cursor: 'pointer',
+                      transition: 'all 0.2s',
+                      marginLeft: '15px'
+                    }}
+                    onMouseEnter={(e) => {
+                      const target = e.target as HTMLButtonElement;
+                      target.style.backgroundColor = '#dc2626';
+                    }}
+                    onMouseLeave={(e) => {
+                      const target = e.target as HTMLButtonElement;
+                      target.style.backgroundColor = '#ef4444';
+                    }}
+                  >
+                    Delete
+                  </button>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
+      </div>
+
       {/* Podcast Management Section */}
       <div style={{ 
         marginBottom: '30px', 
@@ -1134,6 +1382,7 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
           <li>To remove admin privileges: Enter their email and click <strong>"Remove Admin"</strong></li>
           <li>To create news articles: Click <strong>"Create New Article"</strong> and fill out the form</li>
           <li>To add judges: Click <strong>"Add New Judge"</strong> and paste JSON data with Cloudinary photo URL</li>
+          <li>To add team members: Go to <strong>Team Member Management</strong> section and click <strong>"Add New Team Member"</strong></li>
           <li>To add podcasts: Go to <strong>Podcast Management</strong> section and click <strong>"Add New Podcast"</strong></li>
           <li>To see all users: Click <strong>"Get All Users"</strong></li>
           <li>All operations are authenticated through your Auth0 session and database role</li>

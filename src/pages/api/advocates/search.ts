@@ -28,12 +28,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         specialization: true,
         city: true,
         phoneNumber: true,
-        isVerified: true,
         createdAt: true,
       },
       orderBy: [
-        { isVerified: 'desc' }, // Verified advocates first
-        { createdAt: 'desc' }, // Then by registration date
+        { createdAt: 'desc' },
       ],
     });
 

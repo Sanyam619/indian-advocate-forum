@@ -78,13 +78,6 @@ async function handlePaymentSuccess(paymentIntent: Stripe.PaymentIntent) {
     });
 
     if (user) {
-      await prisma.user.update({
-        where: { email },
-        data: {
-          isVerified: true,
-        },
-      });
-
       // Create payment record
       await prisma.payment.create({
         data: {
@@ -120,13 +113,7 @@ async function handlePaymentFailure(paymentIntent: Stripe.PaymentIntent) {
     });
 
     if (user) {
-      await prisma.user.update({
-        where: { email },
-        data: {
-          isVerified: false,
-        },
-      });
-
+      // Log payment failure
       console.log(`Payment failed for user: ${email}`);
     }
   } catch (error) {

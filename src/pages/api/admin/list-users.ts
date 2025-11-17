@@ -23,7 +23,6 @@ export default async function listUsers(req: NextApiRequest, res: NextApiRespons
         email: true,
         fullName: true,
         role: true,
-        isVerified: true,
         barRegistrationNo: true,
         yearsOfExperience: true,
         createdAt: true,

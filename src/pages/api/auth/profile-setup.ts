@@ -56,7 +56,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     // Only mark as complete if completeSetup flag is true
     if (completeSetup) {
       updateData.isProfileSetup = true;
-      updateData.isVerified = true;
+      updateData.role = 'ADVOCATE';
     }
 
     // Update user profile

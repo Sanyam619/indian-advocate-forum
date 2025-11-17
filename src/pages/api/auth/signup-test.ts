@@ -62,7 +62,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         languages: isAdvocate && languages ? languages : [],
         officeAddress: isAdvocate ? officeAddress : null,
         isProfileSetup: true,
-        isVerified: true,
         payments: {
           create: {
             amount: isAdvocate ? 5000 : 1000,

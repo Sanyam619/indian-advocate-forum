@@ -22,7 +22,6 @@ model User {
   fullName            String
   role                UserRole  @default(USER)
   profilePhoto        String?
-  isVerified          Boolean   @default(false)
   barRegistrationNo   String?
   yearsOfExperience   String?
   city                String?
@@ -138,4 +137,26 @@ model Judge {
   category        String?  // "Current Chief Justice", "Current Judge", "Former Chief Justice", "Former Judge"
   createdAt       DateTime @default(now())
   updatedAt       DateTime @updatedAt
+}
+
+model TeamMember {
+  id                          String   @id @default(auto()) @map("_id") @db.ObjectId
+  barRegistrationNo           String?
+  title                       String?
+  name                        String
+  emailId                     String   @unique
+  legalTitle                  String?
+  phoneNo                     String?
+  yearOfBirth                 String?
+  placeOfPractice             String?
+  address                     String?
+  enrollment                  String?
+  webinarPrimaryPreference    String?
+  webinarSecondaryPreference  String?
+  articleContribution         Boolean  @default(false) // Yes or No
+  references                  String?  // "President" or "AVS" or "DG" or any position
+  profilePhoto                String?  // Cloudinary URL
+  role                        String   // "President", "DG", "AVS", "Secretary", "Member", etc.
+  createdAt                   DateTime @default(now())
+  updatedAt                   DateTime @updatedAt
 }

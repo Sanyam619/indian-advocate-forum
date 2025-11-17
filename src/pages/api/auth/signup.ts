@@ -64,7 +64,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         languages: isAdvocate && languages ? languages : [],
         officeAddress: isAdvocate ? officeAddress : null,
         isProfileSetup: true,
-        isVerified: true,
         // Create payment record
         payments: {
           create: {

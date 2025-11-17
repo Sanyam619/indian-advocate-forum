@@ -21,6 +21,7 @@ import {
   VideoCameraIcon,
   MagnifyingGlassIcon,
   PlayIcon,
+  UserGroupIcon,
 } from '@heroicons/react/24/outline';
 
 interface LayoutProps {
@@ -249,6 +250,18 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
               >
                 <PlayIcon className="h-4 w-4 mr-2" />
                 Podcasts
+              </Link>
+
+              <Link
+                href="/our-team"
+                className={`${
+                  router.pathname === '/our-team' || router.pathname.startsWith('/our-team/')
+                    ? 'text-purple-600'
+                    : 'text-gray-700 hover:text-purple-600'
+                } flex items-center px-3 py-2 text-sm font-medium transition-colors duration-200`}
+              >
+                <UserGroupIcon className="h-4 w-4 mr-2" />
+                Our Team
               </Link>
             </div>
 
@@ -930,6 +943,20 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
                   >
                     <VideoCameraIcon className="h-5 w-5 mr-3" />
                     Video Conference
+                  </Link>
+
+                  {/* Our Team */}
+                  <Link
+                    href="/our-team"
+                    className={`${
+                      router.pathname === '/our-team' || router.pathname.startsWith('/our-team/')
+                        ? 'bg-purple-50 text-purple-600 border-purple-600'
+                        : 'text-gray-700 hover:bg-gray-50 hover:text-gray-900 border-transparent'
+                    } flex items-center px-3 py-3 text-base font-medium border-l-4 rounded-r-md mt-1`}
+                    onClick={() => setIsMobileMenuOpen(false)}
+                  >
+                    <UserGroupIcon className="h-5 w-5 mr-3" />
+                    Our Team
                   </Link>
 
                   {/* Judges */}

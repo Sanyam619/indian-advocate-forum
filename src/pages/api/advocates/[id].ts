@@ -27,7 +27,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         yearsOfExperience: true,
         specialization: true,
         city: true,
-        isVerified: true,
         role: true,
         createdAt: true,
         // Additional fields for full profile

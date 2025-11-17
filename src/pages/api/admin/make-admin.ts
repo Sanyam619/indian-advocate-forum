@@ -45,8 +45,7 @@ export default async function makeAdmin(req: NextApiRequest, res: NextApiRespons
     const updatedUser = await prisma.user.update({
       where: { id: user.id },
       data: { 
-        role: 'ADMIN',
-        isVerified: true // Admins should be verified
+        role: 'ADMIN'
       }
     });
 
