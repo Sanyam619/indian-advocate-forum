@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { toast } from 'react-hot-toast';
 import { VideoCameraIcon, LinkIcon, TagIcon } from '@heroicons/react/24/outline';
@@ -27,7 +27,11 @@ const categories = [
 
 const PodcastUploadForm: React.FC = () => {
   const router = useRouter();
+  const { id } = router.query; // For edit mode
+  const isEditMode = Boolean(id);
+  
   const [loading, setLoading] = useState(false);
+  const [fetchingData, setFetchingData] = useState(false);
   const [formData, setFormData] = useState<PodcastFormData>({
     title: '',
     description: '',
@@ -38,6 +42,40 @@ const PodcastUploadForm: React.FC = () => {
   });
 
   const [tagInput, setTagInput] = useState('');
+
+  // Fetch podcast data if in edit mode
+  useEffect(() => {
+    if (isEditMode && id) {
+      const fetchPodcast = async () => {
+        setFetchingData(true);
+        try {
+          // Use admin endpoint to bypass isPublished check
+          const response = await fetch(`/api/podcasts/${id}`);
+          const result = await response.json();
+          
+          if (result.success && result.podcast) {
+            setFormData({
+              title: result.podcast.title || '',
+              description: result.podcast.description || '',
+              videoUrl: result.podcast.videoUrl || '',
+              thumbnailUrl: result.podcast.thumbnailUrl || '',
+              category: result.podcast.category || '',
+              tags: result.podcast.tags || []
+            });
+          } else {
+            toast.error('Failed to load podcast data');
+          }
+        } catch (error) {
+          console.error('Error fetching podcast:', error);
+          toast.error('Error loading podcast data');
+        } finally {
+          setFetchingData(false);
+        }
+      };
+      
+      fetchPodcast();
+    }
+  }, [isEditMode, id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -102,39 +140,54 @@ const PodcastUploadForm: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/podcasts', {
-        method: 'POST',
+      const url = isEditMode ? '/api/admin/edit-podcast' : '/api/podcasts';
+      const method = isEditMode ? 'PUT' : 'POST';
+      const body = isEditMode 
+        ? JSON.stringify({ podcastId: id, ...formData })
+        : JSON.stringify(formData);
+      
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body,
       });
 
       const data = await response.json();
 
       if (data.success) {
-        toast.success('Podcast created successfully!');
-        router.push('/podcasts');
+        toast.success(`Podcast ${isEditMode ? 'updated' : 'created'} successfully!`);
+        router.push('/admin-panel');
       } else {
-        toast.error(data.message || 'Failed to create podcast');
+        toast.error(data.message || `Failed to ${isEditMode ? 'update' : 'create'} podcast`);
       }
     } catch (error) {
-      console.error('Error creating podcast:', error);
-      toast.error('Error creating podcast');
+      console.error(`Error ${isEditMode ? 'updating' : 'creating'} podcast:`, error);
+      toast.error(`Error ${isEditMode ? 'updating' : 'creating'} podcast`);
     } finally {
       setLoading(false);
     }
   };
+
+  if (fetchingData) {
+    return (
+      <div className="max-w-4xl mx-auto p-6 text-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-4 border-purple-200 border-t-purple-600 mx-auto mb-4"></div>
+        <p className="text-gray-600">Loading podcast data...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="max-w-4xl mx-auto p-6">
       {/* Header */}
       <div className="mb-8">
         <h1 className="text-3xl font-bold text-gray-900 mb-2">
-          Upload New Video Podcast
+          {isEditMode ? 'Edit' : 'Upload New'} Video Podcast
         </h1>
         <p className="text-gray-600">
-          Add a new video podcast by providing the Cloudinary URL and details
+          {isEditMode ? 'Update' : 'Add a new'} video podcast by providing the Cloudinary URL and details
         </p>
       </div>
 
@@ -297,7 +350,9 @@ const PodcastUploadForm: React.FC = () => {
             disabled={loading}
             className="w-full bg-purple-600 text-white py-3 px-4 rounded-md hover:bg-purple-700 focus:ring-2 focus:ring-purple-500 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed font-medium"
           >
-            {loading ? 'Creating Podcast...' : '🎬 Create Video Podcast'}
+            {loading 
+              ? `${isEditMode ? 'Updating' : 'Creating'} Podcast...` 
+              : `🎬 ${isEditMode ? 'Update' : 'Create'} Video Podcast`}
           </button>
         </div>
       </form>

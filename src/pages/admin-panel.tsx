@@ -188,6 +188,7 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
   const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('info');
   const [loading, setLoading] = useState(false);
   const [showNewsForm, setShowNewsForm] = useState(false);
+  const [editingNewsId, setEditingNewsId] = useState<string | null>(null);
   const [showJudges, setShowJudges] = useState(false);
   const [showNewsList, setShowNewsList] = useState(false);
   const [showPodcastsList, setShowPodcastsList] = useState(false);
@@ -280,19 +281,31 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
   }) => {
     setLoading(true);
     try {
-      const response = await fetch('/api/news', {
-        method: 'POST',
+      const endpoint = editingNewsId ? '/api/admin/edit-news' : '/api/news';
+      const method = editingNewsId ? 'PUT' : 'POST';
+      const body = editingNewsId ? { newsId: editingNewsId, ...formData } : formData;
+
+      const response = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData)
+        body: JSON.stringify(body)
       });
 
       const data = await response.json();
 
       if (response.ok) {
-        showMessage(`✅ News article "${formData.title}" created successfully!`, 'success');
+        showMessage(
+          `✅ News article "${formData.title}" ${editingNewsId ? 'updated' : 'created'} successfully!`, 
+          'success'
+        );
         setShowNewsForm(false);
+        setEditingNewsId(null);
+        // Refresh news list if it's currently shown
+        if (showNewsList) {
+          listAllNews();
+        }
       } else {
         showMessage(`❌ ERROR: ${data.error || data.message}`, 'error');
       }
@@ -765,23 +778,43 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
                       </span>
                     )}
                   </div>
-                  <button
-                    onClick={() => deleteNews(item.id, item.title)}
-                    disabled={loading}
-                    style={{
-                      backgroundColor: '#dc2626',
-                      color: 'white',
-                      padding: '8px 16px',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      opacity: loading ? 0.6 : 1,
-                      fontWeight: '600'
-                    }}
-                  >
-                    Delete
-                  </button>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      onClick={() => {
+                        setEditingNewsId(item.id);
+                        setShowNewsForm(true);
+                      }}
+                      style={{
+                        backgroundColor: '#2563eb',
+                        color: 'white',
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteNews(item.id, item.title)}
+                      disabled={loading}
+                      style={{
+                        backgroundColor: '#dc2626',
+                        color: 'white',
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        opacity: loading ? 0.6 : 1,
+                        fontWeight: '600'
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -902,23 +935,40 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
                       {judge.designation} | {judge.court}
                     </span>
                   </div>
-                  <button
-                    onClick={() => deleteJudge(judge.id, judge.name)}
-                    disabled={loading}
-                    style={{
-                      backgroundColor: '#dc2626',
-                      color: 'white',
-                      padding: '8px 16px',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      opacity: loading ? 0.6 : 1,
-                      fontWeight: '600'
-                    }}
-                  >
-                    Delete
-                  </button>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      onClick={() => router.push(`/admin/add-judge?id=${judge.id}`)}
+                      style={{
+                        backgroundColor: '#2563eb',
+                        color: 'white',
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteJudge(judge.id, judge.name)}
+                      disabled={loading}
+                      style={{
+                        backgroundColor: '#dc2626',
+                        color: 'white',
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        opacity: loading ? 0.6 : 1,
+                        fontWeight: '600'
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1070,31 +1120,56 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
                       )}
                     </div>
                   </div>
-                  <button
-                    onClick={() => deleteTeamMember(member.id, member.name)}
-                    style={{
-                      backgroundColor: '#ef4444',
-                      color: 'white',
-                      padding: '8px 16px',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      fontWeight: '600',
-                      cursor: 'pointer',
-                      transition: 'all 0.2s',
-                      marginLeft: '15px'
-                    }}
-                    onMouseEnter={(e) => {
-                      const target = e.target as HTMLButtonElement;
-                      target.style.backgroundColor = '#dc2626';
-                    }}
-                    onMouseLeave={(e) => {
-                      const target = e.target as HTMLButtonElement;
-                      target.style.backgroundColor = '#ef4444';
-                    }}
-                  >
-                    Delete
-                  </button>
+                  <div style={{ display: 'flex', gap: '10px', marginLeft: '15px' }}>
+                    <button
+                      onClick={() => router.push(`/admin/add-team-member?id=${member.id}`)}
+                      style={{
+                        backgroundColor: '#2563eb',
+                        color: 'white',
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLButtonElement;
+                        target.style.backgroundColor = '#1d4ed8';
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLButtonElement;
+                        target.style.backgroundColor = '#2563eb';
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deleteTeamMember(member.id, member.name)}
+                      style={{
+                        backgroundColor: '#ef4444',
+                        color: 'white',
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        fontWeight: '600',
+                        cursor: 'pointer',
+                        transition: 'all 0.2s'
+                      }}
+                      onMouseEnter={(e) => {
+                        const target = e.target as HTMLButtonElement;
+                        target.style.backgroundColor = '#dc2626';
+                      }}
+                      onMouseLeave={(e) => {
+                        const target = e.target as HTMLButtonElement;
+                        target.style.backgroundColor = '#ef4444';
+                      }}
+                    >
+                      Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1215,23 +1290,40 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
                       Category: {podcast.category} | By: {podcast.uploadedBy.fullName} | {new Date(podcast.createdAt).toLocaleDateString()}
                     </span>
                   </div>
-                  <button
-                    onClick={() => deletePodcast(podcast.id, podcast.title)}
-                    disabled={loading}
-                    style={{
-                      backgroundColor: '#dc2626',
-                      color: 'white',
-                      padding: '8px 16px',
-                      border: 'none',
-                      borderRadius: '6px',
-                      fontSize: '14px',
-                      cursor: loading ? 'not-allowed' : 'pointer',
-                      opacity: loading ? 0.6 : 1,
-                      fontWeight: '600'
-                    }}
-                  >
-                    🗑️ Delete
-                  </button>
+                  <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                      onClick={() => router.push(`/admin/upload-podcast?id=${podcast.id}`)}
+                      style={{
+                        backgroundColor: '#2563eb',
+                        color: 'white',
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        cursor: 'pointer',
+                        fontWeight: '600'
+                      }}
+                    >
+                      Edit
+                    </button>
+                    <button
+                      onClick={() => deletePodcast(podcast.id, podcast.title)}
+                      disabled={loading}
+                      style={{
+                        backgroundColor: '#dc2626',
+                        color: 'white',
+                        padding: '8px 16px',
+                        border: 'none',
+                        borderRadius: '6px',
+                        fontSize: '14px',
+                        cursor: loading ? 'not-allowed' : 'pointer',
+                        opacity: loading ? 0.6 : 1,
+                        fontWeight: '600'
+                      }}
+                    >
+                      🗑️ Delete
+                    </button>
+                  </div>
                 </div>
               ))}
             </div>
@@ -1396,8 +1488,12 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
       {showNewsForm && (
         <NewsVideoUploadForm
           onSubmit={createNews}
-          onCancel={() => setShowNewsForm(false)}
+          onCancel={() => {
+            setShowNewsForm(false);
+            setEditingNewsId(null);
+          }}
           isSubmitting={loading}
+          articleId={editingNewsId || undefined}
         />
       )}
       </div>

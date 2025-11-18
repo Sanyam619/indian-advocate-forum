@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/router';
@@ -8,7 +8,11 @@ import { UserGroupIcon, PhotoIcon, DocumentTextIcon } from '@heroicons/react/24/
 const AddTeamMemberPage: React.FC = () => {
   const { user, isLoading } = useUser();
   const router = useRouter();
+  const { id } = router.query; // For edit mode
+  const isEditMode = Boolean(id);
+  
   const [loading, setLoading] = useState(false);
+  const [fetchingData, setFetchingData] = useState(false);
   const [message, setMessage] = useState('');
   const [messageType, setMessageType] = useState<'success' | 'error' | 'info'>('info');
 
@@ -47,8 +51,51 @@ const AddTeamMemberPage: React.FC = () => {
     setTimeout(() => setMessage(''), 5000);
   };
 
+  // Fetch team member data if in edit mode
+  useEffect(() => {
+    if (isEditMode && id) {
+      const fetchTeamMember = async () => {
+        setFetchingData(true);
+        try {
+          const response = await fetch(`/api/team-members/${id}`);
+          const result = await response.json();
+          
+          if (result.success && result.data) {
+            setFormData({
+              barRegistrationNo: result.data.barRegistrationNo || '',
+              title: result.data.title || '',
+              name: result.data.name || '',
+              emailId: result.data.emailId || '',
+              legalTitle: result.data.legalTitle || '',
+              phoneNo: result.data.phoneNo || '',
+              yearOfBirth: result.data.yearOfBirth || '',
+              placeOfPractice: result.data.placeOfPractice || '',
+              address: result.data.address || '',
+              enrollment: result.data.enrollment || '',
+              webinarPrimaryPreference: result.data.webinarPrimaryPreference || '',
+              webinarSecondaryPreference: result.data.webinarSecondaryPreference || '',
+              articleContribution: result.data.articleContribution || false,
+              references: result.data.references || '',
+              profilePhoto: result.data.profilePhoto || '',
+              role: result.data.role || 'Member'
+            });
+          } else {
+            showMessage('Failed to load team member data', 'error');
+          }
+        } catch (error) {
+          console.error('Error fetching team member:', error);
+          showMessage('Error loading team member data', 'error');
+        } finally {
+          setFetchingData(false);
+        }
+      };
+      
+      fetchTeamMember();
+    }
+  }, [isEditMode, id]);
+
   // Show loading while checking authentication
-  if (isLoading) {
+  if (isLoading || fetchingData) {
     return (
       <Layout>
         <div className="flex items-center justify-center min-h-screen">
@@ -100,37 +147,24 @@ const AddTeamMemberPage: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/team-members/add', {
-        method: 'POST',
+      const url = isEditMode ? '/api/admin/edit-team-member' : '/api/team-members/add';
+      const method = isEditMode ? 'PUT' : 'POST';
+      const body = isEditMode 
+        ? JSON.stringify({ teamMemberId: id, ...formData })
+        : JSON.stringify(formData);
+      
+      const response = await fetch(url, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body,
       });
 
       const result = await response.json();
 
       if (response.ok) {
-        showMessage('✅ Team member added successfully!', 'success');
-        // Reset form
-        setFormData({
-          barRegistrationNo: '',
-          title: '',
-          name: '',
-          emailId: '',
-          legalTitle: '',
-          phoneNo: '',
-          yearOfBirth: '',
-          placeOfPractice: '',
-          address: '',
-          enrollment: '',
-          webinarPrimaryPreference: '',
-          webinarSecondaryPreference: '',
-          articleContribution: false,
-          references: '',
-          profilePhoto: '',
-          role: 'Member'
-        });
+        showMessage(`✅ Team member ${isEditMode ? 'updated' : 'added'} successfully!`, 'success');
         // Redirect to admin panel after success
         setTimeout(() => {
           router.push('/admin-panel');
@@ -149,8 +183,8 @@ const AddTeamMemberPage: React.FC = () => {
   return (
     <>
       <Head>
-        <title>Add Team Member - Admin Panel</title>
-        <meta name="description" content="Add new team member to the Indian Advocate Forum" />
+        <title>{isEditMode ? 'Edit' : 'Add'} Team Member - Admin Panel</title>
+        <meta name="description" content={`${isEditMode ? 'Edit' : 'Add new'} team member to the Indian Advocate Forum`} />
       </Head>
 
       <Layout>
@@ -161,10 +195,10 @@ const AddTeamMemberPage: React.FC = () => {
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
                 <UserGroupIcon className="h-8 w-8 mr-3 text-red-600" />
-                Add New Team Member
+                {isEditMode ? 'Edit' : 'Add New'} Team Member
               </h1>
               <p className="text-gray-600">
-                Add team members including President, Director General, and other positions
+                {isEditMode ? 'Update' : 'Add'} team members including President, Director General, and other positions
               </p>
             </div>
 
@@ -483,10 +517,10 @@ const AddTeamMemberPage: React.FC = () => {
                   {loading ? (
                     <span className="flex items-center">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Adding Team Member...
+                      {isEditMode ? 'Updating' : 'Adding'} Team Member...
                     </span>
                   ) : (
-                    'Add Team Member'
+                    isEditMode ? 'Update Team Member' : 'Add Team Member'
                   )}
                 </button>
               </div>

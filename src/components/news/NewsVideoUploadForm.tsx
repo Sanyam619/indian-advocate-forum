@@ -1,5 +1,7 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Upload, X, Play, Image as ImageIcon } from 'lucide-react';
+import { useRouter } from 'next/router';
+import { toast } from 'react-hot-toast';
 
 interface NewsVideoUploadFormProps {
   onSubmit: (formData: {
@@ -14,13 +16,17 @@ interface NewsVideoUploadFormProps {
   }) => void;
   onCancel: () => void;
   isSubmitting?: boolean;
+  articleId?: string; // Optional prop for edit mode
 }
 
 const NewsVideoUploadForm: React.FC<NewsVideoUploadFormProps> = ({
   onSubmit,
   onCancel,
-  isSubmitting = false
+  isSubmitting = false,
+  articleId
 }) => {
+  const router = useRouter();
+  const [fetchingData, setFetchingData] = useState(false);
   const [formData, setFormData] = useState({
     title: '',
     content: '',
@@ -33,6 +39,10 @@ const NewsVideoUploadForm: React.FC<NewsVideoUploadFormProps> = ({
   });
 
   const [dragActive, setDragActive] = useState(false);
+  
+  // Check if we're in edit mode
+  const isEditMode = !!articleId || !!router.query.id;
+  const id = articleId || (router.query.id as string);
 
   const categories = [
     'Supreme Court',
@@ -41,6 +51,42 @@ const NewsVideoUploadForm: React.FC<NewsVideoUploadFormProps> = ({
     'Judgment',
     'Case Analysis'
   ];
+
+  // Fetch news data if in edit mode
+  useEffect(() => {
+    if (isEditMode && id) {
+      const fetchNews = async () => {
+        setFetchingData(true);
+        try {
+          const response = await fetch(`/api/news?id=${id}`);
+          const result = await response.json();
+          
+          if (result.success && result.news) {
+            const newsItem = result.news;
+            setFormData({
+              title: newsItem.title || '',
+              content: newsItem.content || '',
+              category: newsItem.category || 'Legal Update',
+              tags: (newsItem.tags || []).join(', '),
+              imageUrl: newsItem.imageUrl || '',
+              videoUrl: newsItem.videoUrl || '',
+              videoThumbnail: newsItem.videoThumbnail || '',
+              hasVideo: newsItem.hasVideo || false
+            });
+          } else {
+            toast.error('Failed to load news article data');
+          }
+        } catch (error) {
+          console.error('Error fetching news:', error);
+          toast.error('Error loading news article data');
+        } finally {
+          setFetchingData(false);
+        }
+      };
+      
+      fetchNews();
+    }
+  }, [isEditMode, id]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value, type } = e.target;
@@ -93,7 +139,9 @@ const NewsVideoUploadForm: React.FC<NewsVideoUploadFormProps> = ({
       <div className="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[90vh] overflow-y-auto">
         <div className="p-6">
           <div className="flex items-center justify-between mb-6">
-            <h2 className="text-2xl font-bold text-gray-900">Create News Article</h2>
+            <h2 className="text-2xl font-bold text-gray-900">
+              {isEditMode ? 'Edit News Article' : 'Create News Article'}
+            </h2>
             <button
               onClick={onCancel}
               className="text-gray-400 hover:text-gray-600 transition-colors"
@@ -303,10 +351,10 @@ const NewsVideoUploadForm: React.FC<NewsVideoUploadFormProps> = ({
               </button>
               <button
                 type="submit"
-                disabled={isSubmitting}
+                disabled={isSubmitting || fetchingData}
                 className="px-6 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                {isSubmitting ? 'Creating...' : 'Create Article'}
+                {fetchingData ? 'Loading...' : isSubmitting ? (isEditMode ? 'Updating...' : 'Creating...') : (isEditMode ? 'Update Article' : 'Create Article')}
               </button>
             </div>
           </form>

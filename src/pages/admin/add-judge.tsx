@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import { useUser } from '@auth0/nextjs-auth0/client';
 import { useRouter } from 'next/router';
@@ -10,8 +10,41 @@ const AddJudgePage: React.FC = () => {
   const { user, isLoading } = useUser();
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [fetchingData, setFetchingData] = useState(false);
   const [jsonInput, setJsonInput] = useState('');
   const [targetCategory, setTargetCategory] = useState('currentJudges');
+  
+  // Check if we're in edit mode
+  const isEditMode = !!router.query.id;
+  const judgeId = router.query.id as string;
+
+  // Fetch judge data if in edit mode
+  useEffect(() => {
+    if (isEditMode && judgeId) {
+      const fetchJudge = async () => {
+        setFetchingData(true);
+        try {
+          const response = await fetch(`/api/judges/${judgeId}`);
+          const result = await response.json();
+          
+          if (result.success && result.judge) {
+            setJsonInput(JSON.stringify(result.judge, null, 2));
+            // Try to determine category from judge data (optional)
+            // You might need to add logic here based on how categories are stored
+          } else {
+            toast.error('Failed to load judge data');
+          }
+        } catch (error) {
+          console.error('Error fetching judge:', error);
+          toast.error('Error loading judge data');
+        } finally {
+          setFetchingData(false);
+        }
+      };
+      
+      fetchJudge();
+    }
+  }, [isEditMode, judgeId]);
 
   // Sample JSON for reference
   const sampleJson = {
@@ -98,32 +131,38 @@ const AddJudgePage: React.FC = () => {
 
     setLoading(true);
     try {
-      const response = await fetch('/api/judges/add', {
-        method: 'POST',
+      const endpoint = isEditMode ? '/api/admin/edit-judge' : '/api/judges/add';
+      const method = isEditMode ? 'PUT' : 'POST';
+      
+      const body = isEditMode 
+        ? { judgeId, ...validation.data }
+        : { judgeData: validation.data, targetCategory };
+
+      const response = await fetch(endpoint, {
+        method,
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          judgeData: validation.data,
-          targetCategory
-        }),
+        body: JSON.stringify(body),
       });
 
       const result = await response.json();
 
       if (result.success) {
-        toast.success('Judge added successfully!');
-        setJsonInput('');
-        // Optionally redirect to judges page
+        toast.success(isEditMode ? 'Judge updated successfully!' : 'Judge added successfully!');
+        if (!isEditMode) {
+          setJsonInput('');
+        }
+        // Redirect to admin panel or judges page
         setTimeout(() => {
-          router.push('/judges/current');
+          router.push('/admin-panel');
         }, 1500);
       } else {
-        toast.error(result.message || 'Failed to add judge');
+        toast.error(result.message || `Failed to ${isEditMode ? 'update' : 'add'} judge`);
       }
     } catch (error) {
-      console.error('Error adding judge:', error);
-      toast.error('Error adding judge');
+      console.error(`Error ${isEditMode ? 'updating' : 'adding'} judge:`, error);
+      toast.error(`Error ${isEditMode ? 'updating' : 'adding'} judge`);
     } finally {
       setLoading(false);
     }
@@ -148,7 +187,7 @@ const AddJudgePage: React.FC = () => {
             <div className="mb-8">
               <h1 className="text-3xl font-bold text-gray-900 mb-2 flex items-center">
                 <UserIcon className="h-8 w-8 mr-3 text-purple-600" />
-                Add New Judge
+                {isEditMode ? 'Edit Judge' : 'Add New Judge'}
               </h1>
               <p className="text-gray-600 mb-2">
                 Official admin interface for adding judges to the Indian Advocate Forum
@@ -253,20 +292,25 @@ const AddJudgePage: React.FC = () => {
                 </button>
                 <button
                   type="submit"
-                  disabled={loading}
+                  disabled={loading || fetchingData}
                   className={`px-6 py-2 rounded-md text-white font-medium ${
-                    loading
+                    loading || fetchingData
                       ? 'bg-gray-400 cursor-not-allowed'
                       : 'bg-purple-600 hover:bg-purple-700'
                   } transition-colors duration-200`}
                 >
-                  {loading ? (
+                  {fetchingData ? (
                     <span className="flex items-center">
                       <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
-                      Adding Judge...
+                      Loading...
+                    </span>
+                  ) : loading ? (
+                    <span className="flex items-center">
+                      <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
+                      {isEditMode ? 'Updating...' : 'Adding...'}
                     </span>
                   ) : (
-                    'Add Judge'
+                    isEditMode ? 'Update Judge' : 'Add Judge'
                   )}
                 </button>
               </div>
