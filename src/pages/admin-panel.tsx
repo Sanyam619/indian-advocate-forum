@@ -937,7 +937,10 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button
-                      onClick={() => router.push(`/admin/add-judge?id=${judge.id}`)}
+                      type="button"
+                      onClick={() => {
+                        router.push(`/admin/add-judge?id=${judge.id}`);
+                      }}
                       style={{
                         backgroundColor: '#2563eb',
                         color: 'white',
@@ -1122,7 +1125,10 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
                   </div>
                   <div style={{ display: 'flex', gap: '10px', marginLeft: '15px' }}>
                     <button
-                      onClick={() => router.push(`/admin/add-team-member?id=${member.id}`)}
+                      type="button"
+                      onClick={() => {
+                        router.push(`/admin/add-team-member?id=${member.id}`);
+                      }}
                       style={{
                         backgroundColor: '#2563eb',
                         color: 'white',
@@ -1292,7 +1298,10 @@ export default function AdminPanel({ adminUser }: AdminPanelProps) {
                   </div>
                   <div style={{ display: 'flex', gap: '10px' }}>
                     <button
-                      onClick={() => router.push(`/admin/upload-podcast?id=${podcast.id}`)}
+                      type="button"
+                      onClick={() => {
+                        router.push(`/admin/upload-podcast?id=${podcast.id}`);
+                      }}
                       style={{
                         backgroundColor: '#2563eb',
                         color: 'white',

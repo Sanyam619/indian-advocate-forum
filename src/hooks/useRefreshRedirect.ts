@@ -18,8 +18,15 @@ export const useRefreshRedirect = () => {
 
     const currentPath = router.pathname;
     
-    // Don't redirect if already on news page, auth pages, or admin panel
-    if (currentPath === '/news' || currentPath === '/' || currentPath === '/auth' || currentPath === '/admin-panel') {
+    // Don't redirect if already on news page, auth pages, admin panel, or admin edit pages
+    const adminEditPages = ['/admin/add-judge', '/admin/add-team-member', '/admin/upload-podcast'];
+    if (
+      currentPath === '/news' || 
+      currentPath === '/' || 
+      currentPath === '/auth' || 
+      currentPath === '/admin-panel' ||
+      adminEditPages.some(page => currentPath.startsWith(page))
+    ) {
       return;
     }
 
