@@ -6,12 +6,12 @@ export default function Home() {
   const router = useRouter();
   const { user, isLoading } = useUser();
 
-  // Redirect to news page (profile is already set up during signup)
+  // Redirect to landing page
   useEffect(() => {
     if (isLoading) return;
     
-    // Always redirect to news page
-    router.replace('/news');
+    // Always redirect to landing page
+    router.replace('/landing');
   }, [router, isLoading]);
 
   return (
