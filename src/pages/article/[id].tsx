@@ -184,7 +184,11 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
               </Link>
               {article.courtName && (
                 <Link 
-                  href={`/high-court/${article.courtName.toLowerCase().replace(/\s+/g, '-')}`}
+                  href={
+                    article.courtName === 'Supreme Court of India' || article.category === 'Supreme Court'
+                      ? '/supreme-court'
+                      : `/high-court/${article.courtName.toLowerCase().replace(/\s+/g, '-')}`
+                  }
                   className="flex-1 bg-gray-100 text-gray-700 px-6 py-3 rounded-lg hover:bg-gray-200 transition-colors text-center font-medium"
                 >
                   More from {article.courtName}

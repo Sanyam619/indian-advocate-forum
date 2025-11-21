@@ -4,6 +4,7 @@ import type { NextRequest } from 'next/server';
 const publicPaths = [
   '/',
   '/home',
+  '/landing',
   '/auth',
   '/news',
   '/judges',
@@ -19,6 +20,7 @@ const publicPaths = [
   '/podcast',
   '/payment',
   '/video-conference',
+  '/profile',  // Allow profile page
   '/profile-setup',  // Allow profile setup page
   '/api/auth/login',
   '/api/auth/logout',
@@ -34,6 +36,7 @@ const publicPaths = [
 const noRedirectPaths = [
   '/',
   '/home',
+  '/landing',
   '/auth',
   '/judges',
   '/supreme-court',

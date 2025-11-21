@@ -156,7 +156,7 @@ export default function TeamMemberProfilePage() {
                     {member.enrollment && (
                       <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium inline-flex items-center gap-2">
                         <CalendarIcon className="h-4 w-4" />
-                        Enrolled: {member.enrollment}
+                        Enrollment Number: {member.enrollment}
                       </span>
                     )}
                   </div>

@@ -32,12 +32,12 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       return res.status(400).json({ error: 'Title, content, and category are required' });
     }
 
-    // Validate Cloudinary URLs if provided
-    if (imageUrl && !imageUrl.includes('cloudinary.com') && !imageUrl.includes('res.cloudinary.com')) {
+    // Validate Cloudinary URLs if provided (but allow empty strings)
+    if (imageUrl && imageUrl.trim() !== '' && !imageUrl.includes('cloudinary.com') && !imageUrl.includes('res.cloudinary.com')) {
       return res.status(400).json({ error: 'Please provide a valid Cloudinary image URL' });
     }
 
-    if (videoUrl && !videoUrl.includes('cloudinary.com') && !videoUrl.includes('res.cloudinary.com')) {
+    if (videoUrl && videoUrl.trim() !== '' && !videoUrl.includes('cloudinary.com') && !videoUrl.includes('res.cloudinary.com')) {
       return res.status(400).json({ error: 'Please provide a valid Cloudinary video URL' });
     }
 

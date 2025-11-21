@@ -9,42 +9,77 @@ import { useUser } from '@auth0/nextjs-auth0/client';
 export const useRefreshRedirect = () => {
   const router = useRouter();
   const { user, isLoading } = useUser();
+  const hasChecked = useRef(false);
+
+  // Clear the flag on route change START (before navigation completes)
+  useEffect(() => {
+    const handleRouteChangeStart = () => {
+      sessionStorage.setItem('pageWasRefreshed', 'false');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🔄 Route change started - clearing refresh flag');
+      }
+    };
+
+    const handleRouteChangeComplete = () => {
+      sessionStorage.setItem('pageWasRefreshed', 'false');
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ Route change completed - refresh flag cleared');
+      }
+    };
+
+    router.events.on('routeChangeStart', handleRouteChangeStart);
+    router.events.on('routeChangeComplete', handleRouteChangeComplete);
+    
+    return () => {
+      router.events.off('routeChangeStart', handleRouteChangeStart);
+      router.events.off('routeChangeComplete', handleRouteChangeComplete);
+    };
+  }, [router]);
 
   useEffect(() => {
-    // Only run this check once when the component first mounts
-    if (isLoading || !user) {
+    // Only run this check once
+    if (hasChecked.current || isLoading || !user) {
       return;
     }
 
     const currentPath = router.pathname;
     
-    // Don't redirect if already on news page, auth pages, admin panel, or admin edit pages
-    const adminEditPages = ['/admin/add-judge', '/admin/add-team-member', '/admin/upload-podcast'];
-    if (
-      currentPath === '/news' || 
-      currentPath === '/' || 
-      currentPath === '/auth' || 
-      currentPath === '/admin-panel' ||
-      adminEditPages.some(page => currentPath.startsWith(page))
-    ) {
+    // Don't redirect if already on landing page, auth pages, admin panel, profile page, or admin edit pages
+    const excludedPaths = [
+      '/landing',
+      '/',
+      '/auth',
+      '/profile',
+      '/profile-setup',
+      '/admin-panel',
+      '/admin/add-judge',
+      '/admin/add-team-member',
+      '/admin/upload-podcast'
+    ];
+    
+    if (excludedPaths.some(path => currentPath === path || currentPath.startsWith(path))) {
+      sessionStorage.setItem('pageWasRefreshed', 'false');
+      hasChecked.current = true;
       return;
     }
 
     // Check if this was a page refresh using sessionStorage
     const wasRefreshed = sessionStorage.getItem('pageWasRefreshed');
     
-    if (!wasRefreshed) {
-      // This is a normal navigation, mark it
-      sessionStorage.setItem('pageWasRefreshed', 'false');
-    } else if (wasRefreshed === 'true') {
-      // This was a refresh, redirect to news and reset the flag
+    if (wasRefreshed === 'true') {
+      // This was a refresh, redirect to landing page and reset the flag
       if (process.env.NODE_ENV === 'development') {
-        console.log(`🔄 Page refresh detected on ${currentPath}, redirecting to news`);
+        console.log(`🔄 Page refresh detected on ${currentPath}, redirecting to landing`);
       }
       sessionStorage.setItem('pageWasRefreshed', 'false');
-      router.replace('/news');
+      router.replace('/landing');
+    } else {
+      // Normal navigation - clear any stale flags
+      sessionStorage.setItem('pageWasRefreshed', 'false');
     }
-  }, [router.pathname, user, isLoading]); // Only depend on pathname changes
+    
+    hasChecked.current = true;
+  }, [router, user, isLoading]);
 
   // Set up beforeunload event to mark when page is being refreshed
   useEffect(() => {

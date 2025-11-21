@@ -17,12 +17,15 @@ const NewsList: React.FC<NewsListProps> = ({
 }) => {
   const [currentPage, setCurrentPage] = useState(1);
 
+  // Ensure news is an array
+  const newsArray = Array.isArray(news) ? news : [];
+
   // Sort news by date (newest first)
   const sortedNews = useMemo(() => {
-    return [...news].sort((a, b) => 
+    return [...newsArray].sort((a, b) => 
       new Date(b.publishDate).getTime() - new Date(a.publishDate).getTime()
     );
-  }, [news]);
+  }, [newsArray]);
 
   // Paginate results
   const totalPages = Math.ceil(sortedNews.length / itemsPerPage);
