@@ -6,8 +6,84 @@ import {
   MapPinIcon, 
   ScaleIcon,
   CheckBadgeIcon,
-  ArrowRightIcon
+  ArrowRightIcon,
+  MagnifyingGlassIcon,
+  UserGroupIcon
 } from '@heroicons/react/24/outline';
+
+// Team Member Card Component with 3D Tilt
+const TeamMemberCard: React.FC<{ member: any }> = ({ member }) => {
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateXValue = ((y - centerY) / centerY) * -10;
+    const rotateYValue = ((x - centerX) / centerX) * 10;
+    setRotateX(rotateXValue);
+    setRotateY(rotateYValue);
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+  };
+
+  return (
+    <div
+      className="bg-white rounded-xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${rotateX !== 0 || rotateY !== 0 ? '-8px' : '0px'})`,
+        transition: 'transform 0.1s ease-out, box-shadow 0.3s ease'
+      }}
+    >
+      <div className="p-6">
+        <div className="relative mb-4">
+          {member.profilePhoto ? (
+            <img
+              src={member.profilePhoto}
+              alt={member.name}
+              className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-purple-100"
+            />
+          ) : (
+            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold mx-auto border-4 border-purple-100">
+              {member.name.charAt(0)}
+            </div>
+          )}
+        </div>
+        <div className="text-center">
+          <h3 className="text-lg font-bold text-gray-900 mb-1">
+            {member.title} {member.name}
+          </h3>
+          <p className="text-purple-600 font-semibold mb-3">
+            {member.references || 'Member'}
+          </p>
+          <div className="space-y-2 mb-4">
+            <p className="text-xs text-gray-500 font-mono bg-gray-50 inline-block px-3 py-1 rounded">
+              {member.barRegistrationNo}
+            </p>
+            <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
+              <MapPinIcon className="h-4 w-4 text-purple-600" />
+              {member.placeOfPractice}
+            </p>
+          </div>
+          <Link href={`/our-team/${member.id}`}>
+            <button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200">
+              View Profile
+            </button>
+          </Link>
+        </div>
+      </div>
+    </div>
+  );
+};
 
 interface TeamMember {
   id: string;
@@ -33,6 +109,12 @@ export default function OurTeamPage() {
   const [president, setPresident] = useState<TeamMember | null>(null);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
+  const [searchQuery, setSearchQuery] = useState('');
+
+  // Filter members based on search query (case-insensitive)
+  const filteredMembers = members.filter(member =>
+    member.name.toLowerCase().includes(searchQuery.toLowerCase())
+  );
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -79,80 +161,109 @@ export default function OurTeamPage() {
       </Head>
 
       <Layout>
-        <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-indigo-50/30">
+        <div className="min-h-screen bg-gradient-to-br from-slate-50 via-blue-50/50 to-purple-50/50">
           {/* Header Section */}
-          <div className="bg-gradient-to-r from-purple-600 via-purple-700 to-indigo-600 text-white py-16">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-              <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-pink-500 text-white py-12 overflow-hidden">
+            {/* Decorative background elements */}
+            <div className="absolute inset-0 opacity-20">
+              <div className="absolute top-0 left-0 w-96 h-96 bg-white rounded-full blur-3xl -translate-x-1/2 -translate-y-1/2"></div>
+              <div className="absolute bottom-0 right-0 w-96 h-96 bg-white rounded-full blur-3xl translate-x-1/2 translate-y-1/2"></div>
+            </div>
+            
+            <div className="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+              <div className="inline-flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-sm rounded-2xl mb-4">
+                <UserGroupIcon className="h-8 w-8 text-white" />
+              </div>
+              <h1 className="text-4xl md:text-5xl font-extrabold mb-3 bg-clip-text text-transparent bg-gradient-to-r from-white to-purple-100">
                 Meet Our Team
               </h1>
-              <p className="text-xl text-purple-100 max-w-3xl mx-auto">
+              <p className="text-lg md:text-xl text-purple-50 max-w-3xl mx-auto font-light">
                 Dedicated professionals working to connect legal minds across India
               </p>
-              <div className="w-24 h-1 bg-white mx-auto mt-6 rounded-full"></div>
+              <div className="flex items-center justify-center gap-2 mt-5">
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                <div className="w-20 h-1 bg-gradient-to-r from-white/50 to-transparent rounded-full"></div>
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-100"></div>
+                <div className="w-20 h-1 bg-gradient-to-l from-white/50 to-transparent rounded-full"></div>
+                <div className="w-2 h-2 bg-white rounded-full animate-pulse delay-200"></div>
+              </div>
             </div>
           </div>
 
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
             
             {/* President Section */}
             {president && (
-              <div className="mb-16">
-                <div className="text-center mb-8">
-                  <h2 className="text-2xl font-bold text-gray-900 flex items-center justify-center gap-2">
-                    <span className="text-3xl">🏆</span>
-                    President
-                  </h2>
+              <div className="mb-20">
+                <div className="text-center mb-10">
+                  <div className="inline-flex items-center gap-3 bg-gradient-to-r from-purple-100 to-indigo-100 px-6 py-3 rounded-full mb-4">
+                    <span className="w-2 h-2 bg-purple-600 rounded-full animate-pulse"></span>
+                    <h2 className="text-xl font-bold text-gray-900 uppercase tracking-wide">
+                      President
+                    </h2>
+                    <span className="w-2 h-2 bg-purple-600 rounded-full animate-pulse"></span>
+                  </div>
                 </div>
                 
-                <div className="bg-gradient-to-br from-blue-600 via-purple-600 to-indigo-700 rounded-3xl p-8 md:p-12 text-white shadow-2xl hover:shadow-3xl transition-shadow duration-300">
-                  <div className="flex flex-col lg:flex-row items-center justify-center gap-8">
-                    {/* President Photo */}
-                    <div className="flex-shrink-0">
-                      <div className="relative">
-                        {president.profilePhoto ? (
-                          <img
-                            src={president.profilePhoto}
-                            alt={president.name}
-                            className="w-48 h-48 rounded-2xl object-cover border-4 border-white shadow-2xl"
-                          />
-                        ) : (
-                          <div className="w-48 h-48 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-white text-6xl font-bold border-4 border-white shadow-2xl">
-                            {president.name.charAt(0)}
+                <div className="relative group">
+                  {/* Decorative background gradient */}
+                  <div className="absolute inset-0 bg-gradient-to-br from-purple-400 via-indigo-500 to-blue-600 rounded-3xl blur-xl opacity-20 group-hover:opacity-30 transition-opacity duration-300"></div>
+                  
+                  <div className="relative bg-gradient-to-br from-indigo-600 via-purple-600 to-violet-700 rounded-3xl p-1 shadow-2xl">
+                    <div className="bg-white rounded-3xl p-8 md:p-12">
+                      <div className="flex flex-col lg:flex-row items-center gap-10">
+                        {/* President Photo */}
+                        <div className="flex-shrink-0">
+                          <div className="relative group/photo">
+                            {/* Decorative ring */}
+                            <div className="absolute -inset-3 bg-gradient-to-br from-purple-400 to-indigo-600 rounded-3xl opacity-75 group-hover/photo:opacity-100 transition-opacity duration-300 blur-sm"></div>
+                            {president.profilePhoto ? (
+                              <img
+                                src={president.profilePhoto}
+                                alt={president.name}
+                                className="relative w-56 h-56 rounded-2xl object-cover border-4 border-white shadow-xl"
+                              />
+                            ) : (
+                              <div className="relative w-56 h-56 rounded-2xl bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-7xl font-bold border-4 border-white shadow-xl">
+                                {president.name.charAt(0)}
+                              </div>
+                            )}
                           </div>
-                        )}
-                      </div>
-                    </div>
+                        </div>
 
-                    {/* President Info */}
-                    <div className="text-center lg:text-left flex-1">
-                      <h3 className="text-3xl md:text-4xl font-bold mb-2">
-                        {president.title} {president.name}
-                      </h3>
-                      <p className="text-xl font-semibold text-purple-100 mb-3">
-                        President - Indian Advocate Forum
-                      </p>
-                      <p className="text-lg text-purple-50 mb-4">
-                        {president.legalTitle}
-                      </p>
-                      
-                      <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-4">
-                        <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium">
-                          <ScaleIcon className="inline h-4 w-4 mr-1" />
-                          {president.barRegistrationNo}
-                        </span>
-                        <span className="bg-white/20 backdrop-blur-sm px-4 py-2 rounded-lg text-sm font-medium">
-                          <MapPinIcon className="inline h-4 w-4 mr-1" />
-                          {president.placeOfPractice}
-                        </span>
-                      </div>
+                        {/* President Info */}
+                        <div className="flex-1 text-center lg:text-left">
+                          <div className="mb-6">
+                            <h3 className="text-4xl md:text-5xl font-extrabold text-gray-900 mb-3">
+                              {president.title} {president.name}
+                            </h3>
+                            <p className="text-2xl font-bold bg-gradient-to-r from-purple-600 to-indigo-600 bg-clip-text text-transparent mb-2">
+                              President - Indian Advocate Forum
+                            </p>
+                            <p className="text-lg text-gray-600 font-medium">
+                              {president.legalTitle}
+                            </p>
+                          </div>
+                          
+                          <div className="flex flex-wrap justify-center lg:justify-start gap-3 mb-6">
+                            <span className="bg-gradient-to-r from-purple-50 to-indigo-50 border border-purple-200 px-4 py-2.5 rounded-xl text-sm font-semibold text-purple-700 inline-flex items-center gap-2">
+                              <ScaleIcon className="h-5 w-5" />
+                              {president.barRegistrationNo}
+                            </span>
+                            <span className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 px-4 py-2.5 rounded-xl text-sm font-semibold text-blue-700 inline-flex items-center gap-2">
+                              <MapPinIcon className="h-5 w-5" />
+                              {president.placeOfPractice}
+                            </span>
+                          </div>
 
-                      <Link href={`/our-team/${president.id}`}>
-                        <button className="bg-white text-purple-700 px-6 py-3 rounded-lg font-semibold hover:bg-purple-50 transition-colors duration-200 inline-flex items-center gap-2">
-                          View Complete Profile
-                          <ArrowRightIcon className="h-5 w-5" />
-                        </button>
-                      </Link>
+                          <Link href={`/our-team/${president.id}`}>
+                            <button className="group/btn bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center gap-3">
+                              View Complete Profile
+                              <ArrowRightIcon className="h-5 w-5 group-hover/btn:translate-x-1 transition-transform duration-200" />
+                            </button>
+                          </Link>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -162,62 +273,55 @@ export default function OurTeamPage() {
             {/* Other Team Members Section */}
             {members.length > 0 && (
               <div>
-                <div className="text-center mb-12">
-                  <h2 className="text-3xl font-bold text-gray-900 mb-4">Our Team Members</h2>
-                  <div className="w-20 h-1 bg-gradient-to-r from-purple-600 to-indigo-600 mx-auto rounded-full"></div>
+                <div className="text-center mb-10">
+                  <h2 className="text-4xl font-bold text-gray-900 mb-4">Our Team Members</h2>
+                  <div className="flex items-center justify-center gap-2">
+                    <div className="w-12 h-1 bg-gradient-to-r from-transparent via-purple-600 to-transparent rounded-full"></div>
+                    <div className="w-2 h-2 bg-purple-600 rounded-full"></div>
+                    <div className="w-12 h-1 bg-gradient-to-r from-transparent via-indigo-600 to-transparent rounded-full"></div>
+                  </div>
                 </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-                  {members.map((member) => (
-                    <div
-                      key={member.id}
-                      className="bg-white rounded-xl shadow-lg hover:shadow-xl transition-all duration-300 overflow-hidden group"
-                    >
-                      <div className="p-6">
-                        {/* Member Photo */}
-                        <div className="relative mb-4">
-                          {member.profilePhoto ? (
-                            <img
-                              src={member.profilePhoto}
-                              alt={member.name}
-                              className="w-32 h-32 rounded-full object-cover mx-auto border-4 border-purple-100 group-hover:border-purple-300 transition-colors duration-200"
-                            />
-                          ) : (
-                            <div className="w-32 h-32 rounded-full bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center text-white text-4xl font-bold mx-auto border-4 border-purple-100 group-hover:border-purple-300 transition-colors duration-200">
-                              {member.name.charAt(0)}
-                            </div>
-                          )}
-                        </div>
-
-                        {/* Member Info */}
-                        <div className="text-center">
-                          <h3 className="text-lg font-bold text-gray-900 mb-1">
-                            {member.title} {member.name}
-                          </h3>
-                          <p className="text-purple-600 font-semibold mb-3">
-                            {member.references || 'Member'}
-                          </p>
-
-                          <div className="space-y-2 mb-4">
-                            <p className="text-xs text-gray-500 font-mono bg-gray-50 inline-block px-3 py-1 rounded">
-                              {member.barRegistrationNo}
-                            </p>
-                            <p className="text-sm text-gray-600 flex items-center justify-center gap-1">
-                              <MapPinIcon className="h-4 w-4 text-purple-600" />
-                              {member.placeOfPractice}
-                            </p>
-                          </div>
-
-                          <Link href={`/our-team/${member.id}`}>
-                            <button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 text-white py-2 px-4 rounded-lg font-semibold hover:from-purple-700 hover:to-indigo-700 transition-all duration-200">
-                              View Profile
-                            </button>
-                          </Link>
-                        </div>
-                      </div>
-                    </div>
-                  ))}
+                {/* Search Bar */}
+                <div className="max-w-2xl mx-auto mb-8">
+                  <div className="relative">
+                    <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                    <input
+                      type="text"
+                      placeholder="Search team members by name..."
+                      value={searchQuery}
+                      onChange={(e) => setSearchQuery(e.target.value)}
+                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm"
+                    />
+                    {searchQuery && (
+                      <button
+                        onClick={() => setSearchQuery('')}
+                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                      >
+                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                        </svg>
+                      </button>
+                    )}
+                  </div>
+                  {searchQuery && (
+                    <p className="text-sm text-gray-600 mt-2 text-center">
+                      Found {filteredMembers.length} member{filteredMembers.length !== 1 ? 's' : ''} matching "{searchQuery}"
+                    </p>
+                  )}
                 </div>
+
+                {filteredMembers.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                    {filteredMembers.map((member) => (
+                      <TeamMemberCard key={member.id} member={member} />
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-12">
+                    <p className="text-gray-600 text-lg">No team members found matching "{searchQuery}"</p>
+                  </div>
+                )}
               </div>
             )}
 

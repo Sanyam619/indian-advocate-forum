@@ -1097,6 +1097,36 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
       {/* Email Verification Banner */}
       <EmailVerificationBanner />
 
+      {/* Breadcrumb Home Link - Show on all pages except landing/home */}
+      {router.pathname !== '/landing' && router.pathname !== '/' && (
+        <div className="bg-gradient-to-r from-gray-50 to-white border-b border-gray-200">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8 py-3">
+            <Link 
+              href="/landing"
+              className="inline-flex items-center text-sm font-medium text-gray-600 hover:text-purple-600 transition-colors duration-200 group"
+            >
+              <svg 
+                className="h-4 w-4 mr-2 transition-transform group-hover:-translate-x-1" 
+                fill="none" 
+                viewBox="0 0 24 24" 
+                stroke="currentColor"
+              >
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
+              </svg>
+              Home
+              {router.pathname !== '/news' && router.pathname !== '/landing' && (
+                <>
+                  <span className="mx-2 text-gray-400">/</span>
+                  <span className="text-gray-800 capitalize">
+                    {router.pathname.split('/')[1]?.replace(/-/g, ' ') || 'Page'}
+                  </span>
+                </>
+              )}
+            </Link>
+          </div>
+        </div>
+      )}
+
       {/* Main Content */}
       <main className="flex-1">
         <div className="py-6">

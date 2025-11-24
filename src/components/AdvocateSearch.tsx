@@ -2,6 +2,118 @@ import React, { useState, useEffect } from 'react';
 import { MagnifyingGlassIcon, PhoneIcon, EnvelopeIcon, EyeIcon } from '@heroicons/react/24/outline';
 import { useRouter } from 'next/router';
 
+// Advocate Card Component with 3D Tilt
+const AdvocateCard: React.FC<{ advocate: any; city: string; onCall: (phone: string) => void; onEmail: (email: string, name: string) => void; onView: (id: string) => void }> = ({ advocate, city, onCall, onEmail, onView }) => {
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    const rotateXValue = ((y - centerY) / centerY) * -10;
+    const rotateYValue = ((x - centerX) / centerX) * 10;
+    setRotateX(rotateXValue);
+    setRotateY(rotateYValue);
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+  };
+
+  return (
+    <div 
+      className="bg-white rounded-lg shadow-md p-6 hover:shadow-2xl transition-all duration-300"
+      onMouseMove={handleMouseMove}
+      onMouseLeave={handleMouseLeave}
+      style={{
+        transform: `perspective(1000px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateY(${rotateX !== 0 || rotateY !== 0 ? '-8px' : '0px'})`,
+        transition: 'transform 0.1s ease-out, box-shadow 0.3s ease'
+      }}
+    >
+      <div className="flex items-center mb-4">
+        <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mr-4 overflow-hidden">
+          {advocate.profilePhoto ? (
+            <img
+              src={advocate.profilePhoto}
+              alt={advocate.fullName}
+              className="w-12 h-12 rounded-full object-cover"
+            />
+          ) : (
+            <span className="text-gray-600 font-medium text-lg">
+              {advocate.fullName.charAt(0)}
+            </span>
+          )}
+        </div>
+        <div className="flex-1">
+          <h3 className="font-semibold text-gray-900">
+            Adv. {advocate.fullName}
+          </h3>
+          {advocate.specialization && Array.isArray(advocate.specialization) && advocate.specialization.length > 0 ? (
+            <div className="flex flex-wrap gap-1 mt-1">
+              {advocate.specialization.slice(0, 2).map((spec: string, idx: number) => (
+                <span key={idx} className="text-xs bg-blue-50 text-blue-700 px-2 py-0.5 rounded">
+                  {spec}
+                </span>
+              ))}
+              {advocate.specialization.length > 2 && (
+                <span className="text-xs text-gray-500">+{advocate.specialization.length - 2}</span>
+              )}
+            </div>
+          ) : advocate.specialization && typeof advocate.specialization === 'string' ? (
+            <p className="text-sm text-gray-600">{advocate.specialization}</p>
+          ) : null}
+        </div>
+      </div>
+      <div className="space-y-2 text-sm text-gray-600 mb-4">
+        {advocate.barRegistrationNo && (
+          <p className="flex items-center">
+            <span className="font-medium mr-2">Bar No:</span>
+            <span className="text-gray-500">{advocate.barRegistrationNo}</span>
+          </p>
+        )}
+        <p className="flex items-center">
+          <span className="font-medium mr-2">Experience:</span>
+          <span className="text-gray-500">{advocate.yearsOfExperience} years</span>
+        </p>
+        <p className="flex items-center">
+          <span className="font-medium mr-2">Location:</span>
+          <span className="text-gray-500">{advocate.city}</span>
+        </p>
+      </div>
+      <div className="flex gap-2">
+        {advocate.phoneNumber && (
+          <button
+            onClick={() => onCall(advocate.phoneNumber)}
+            className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
+          >
+            <PhoneIcon className="h-4 w-4" />
+            Call
+          </button>
+        )}
+        <button
+          onClick={() => onEmail(advocate.email, advocate.fullName)}
+          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm"
+        >
+          <EnvelopeIcon className="h-4 w-4" />
+          Email
+        </button>
+        <button
+          onClick={() => onView(advocate.id)}
+          className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-gray-600 text-white rounded-md hover:bg-gray-700 transition-colors text-sm"
+        >
+          <EyeIcon className="h-4 w-4" />
+          View
+        </button>
+      </div>
+    </div>
+  );
+};
+
 interface Advocate {
   id: string;
   fullName: string;
@@ -176,97 +288,14 @@ Thank you,
           {advocates.length > 0 && (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {advocates.map((advocate) => (
-                <div key={advocate.id} className="bg-white rounded-lg shadow-md p-6 hover:shadow-lg transition-shadow">
-                  {/* Advocate Header */}
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-gray-300 rounded-full flex items-center justify-center mr-4">
-                      {advocate.profilePhoto ? (
-                        <img
-                          src={advocate.profilePhoto}
-                          alt={advocate.fullName}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-gray-600 font-medium text-lg">
-                          {advocate.fullName.charAt(0)}
-                        </span>
-                      )}
-                    </div>
-                    <div className="flex-1">
-                      <h3 className="font-semibold text-gray-900">
-                        Adv. {advocate.fullName}
-                      </h3>
-                      {/* Specialization Tags */}
-                      {advocate.specialization && Array.isArray(advocate.specialization) && advocate.specialization.length > 0 ? (
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {advocate.specialization.slice(0, 3).map((spec, index) => (
-                            <span
-                              key={index}
-                              className="inline-block px-2 py-0.5 text-xs font-medium text-purple-700 bg-purple-50 rounded"
-                            >
-                              {spec}
-                            </span>
-                          ))}
-                          {advocate.specialization.length > 3 && (
-                            <button
-                              onClick={(e) => {
-                                e.preventDefault();
-                                e.stopPropagation();
-                                handleViewProfile(advocate.id);
-                              }}
-                              className="inline-block px-2 py-0.5 text-xs font-medium text-gray-700 bg-gray-100 hover:bg-gray-200 rounded cursor-pointer transition-colors"
-                            >
-                              +{advocate.specialization.length - 3} more
-                            </button>
-                          )}
-                        </div>
-                      ) : (
-                        <p className="text-sm text-gray-600">{advocate.specialization || 'General Practice'}</p>
-                      )}
-                    </div>
-                  </div>
-
-                  {/* Advocate Details */}
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <span className="w-20">Experience:</span>
-                      <span className="font-medium">{advocate.yearsOfExperience} years</span>
-                    </div>
-                    <div className="flex items-center text-sm text-gray-600">
-                      <span className="w-20">Location:</span>
-                      <span>{advocate.city}</span>
-                    </div>
-                    {advocate.barRegistrationNo && (
-                      <div className="flex items-center text-sm text-gray-600">
-                        <span className="w-20">Bar Reg:</span>
-                        <span>{advocate.barRegistrationNo}</span>
-                      </div>
-                    )}
-                  </div>
-
-                  {/* Contact Information */}
-                  <div className="space-y-2 mb-4">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <EnvelopeIcon className="h-4 w-4 mr-2" />
-                      <span className="truncate">{advocate.email}</span>
-                    </div>
-                  </div>
-
-                  {/* View Profile Button */}
-                  <div>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        e.stopPropagation();
-                        handleViewProfile(advocate.id);
-                      }}
-                      className="w-full bg-purple-600 text-white px-4 py-2 rounded-md hover:bg-purple-700 transition-colors flex items-center justify-center"
-                    >
-                      <EyeIcon className="h-4 w-4 mr-1" />
-                      View Profile
-                    </button>
-                  </div>
-                </div>
+                <AdvocateCard
+                  key={advocate.id}
+                  advocate={advocate}
+                  city={city}
+                  onCall={handleCall}
+                  onEmail={handleEmail}
+                  onView={(id) => router.push(`/advocates/${id}`)}
+                />
               ))}
             </div>
           )}

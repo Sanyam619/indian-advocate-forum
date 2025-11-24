@@ -32,7 +32,7 @@ export default function News({ allNews }: NewsPageProps) {
           {/* News List Component */}
           <NewsList 
             news={allNews}
-            title="All Court News"
+            title=""
             itemsPerPage={12}
           />
         </div>
