@@ -163,12 +163,70 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
   const highCourtRef = useRef<HTMLDivElement>(null);
   const joinSCRef = useRef<HTMLDivElement>(null);
 
+  // Scroll detection state
+  const [showFirstNavbar, setShowFirstNavbar] = useState(true);
+  const [lastScrollY, setLastScrollY] = useState(0);
+  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+
+  // Handle scroll behavior with debounce to prevent shaking
+  useEffect(() => {
+    let ticking = false;
+    
+    const handleScroll = () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          const currentScrollY = window.scrollY;
+          
+          // Clear any existing timeout
+          if (scrollTimeoutRef.current) {
+            clearTimeout(scrollTimeoutRef.current);
+          }
+          
+          // Debounce the state update to prevent jitter
+          scrollTimeoutRef.current = setTimeout(() => {
+            // Show first navbar when scrolling up or at top
+            if (currentScrollY < lastScrollY || currentScrollY < 10) {
+              setShowFirstNavbar(true);
+            } 
+            // Hide first navbar when scrolling down and past threshold
+            else if (currentScrollY > lastScrollY && currentScrollY > 50) {
+              setShowFirstNavbar(false);
+            }
+            
+            setLastScrollY(currentScrollY);
+          }, 10); // Small debounce to smooth out rapid changes
+          
+          ticking = false;
+        });
+        
+        ticking = true;
+      }
+    };
+
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    return () => {
+      window.removeEventListener('scroll', handleScroll);
+      if (scrollTimeoutRef.current) {
+        clearTimeout(scrollTimeoutRef.current);
+      }
+    };
+  }, [lastScrollY]);
+
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Sticky Header Container */}
       <div className="sticky top-0 z-50 bg-white shadow-md">
         {/* Top Header Bar - Logo + Key Actions + User Controls */}
-        <div className="bg-white border-b border-gray-100">
+        <div 
+          className={`bg-white border-b border-gray-100 transition-transform duration-300 ease-in-out ${
+            showFirstNavbar ? 'translate-y-0' : '-translate-y-full'
+          }`}
+          style={{ 
+            position: showFirstNavbar ? 'relative' : 'absolute',
+            width: '100%',
+            top: 0
+          }}
+        >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
             <div className="flex justify-between items-center h-16">
               {/* Logo and site name */}
