@@ -1,13 +1,10 @@
-import { useRefreshRedirect } from '../hooks/useRefreshRedirect';
-
 /**
  * Component that handles page refresh redirect to home page
+ * Currently disabled
  */
 export const RefreshHandler: React.FC = () => {
-  // Use the custom hook to handle refresh redirects
-  useRefreshRedirect();
-
-  return null; // This component doesn't render anything
+  // Disabled for now
+  return null;
 };
 
 export default RefreshHandler;

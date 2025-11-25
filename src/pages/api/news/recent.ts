@@ -7,6 +7,8 @@ interface NewsItem {
   publishDate: string;
   category: string;
   courtName?: string;
+  imageUrl?: string;
+  videoThumbnail?: string;
 }
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
@@ -30,6 +32,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
         publishDate: true,
         category: true,
         courtName: true,
+        imageUrl: true,
+        videoThumbnail: true,
       },
     });
 
@@ -40,6 +44,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       publishDate: item.publishDate.toISOString(),
       category: item.category || 'Legal News',
       courtName: item.courtName || undefined,
+      imageUrl: item.imageUrl || undefined,
+      videoThumbnail: item.videoThumbnail || undefined,
       slug: item.id,
     }));
 

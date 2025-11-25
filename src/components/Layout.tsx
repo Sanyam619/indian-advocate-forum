@@ -117,7 +117,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
     "Calcutta High Court",
     "Chhattisgarh High Court",
     "Delhi High Court",
-    "Guwahati High Court",
+    "Gauhati High Court",
     "Gujarat High Court",
     "Himachal Pradesh High Court",
     "High Court of Jammu & Kashmir and Ladakh",
@@ -165,12 +165,14 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
-      {/* Top Header Bar - Logo + Key Actions + User Controls */}
-      <div className="bg-white border-b border-gray-100">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <div className="flex justify-between items-center h-16">
-            {/* Logo and site name */}
-            <div className="flex items-center">
+      {/* Sticky Header Container */}
+      <div className="sticky top-0 z-50 bg-white shadow-md">
+        {/* Top Header Bar - Logo + Key Actions + User Controls */}
+        <div className="bg-white border-b border-gray-100">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex justify-between items-center h-16">
+              {/* Logo and site name */}
+              <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-3">
                 <Image 
                   src="/logo.jpg" 
@@ -1093,6 +1095,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
 
       {/* News Ticker */}
       <NewsTicker speed={25} pauseOnHover={true} showLabel={true} />
+      </div>
+      {/* End of Sticky Header Container */}
 
       {/* Email Verification Banner */}
       <EmailVerificationBanner />

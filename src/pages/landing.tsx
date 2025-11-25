@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { GetServerSideProps } from 'next';
@@ -20,13 +20,81 @@ interface LandingPageProps {
   highCourtNews: NewsItem[];
 }
 
-const LandingPage: React.FC<LandingPageProps> = ({ supremeCourtNews = [], highCourtNews = [] }) => {
-  const loading = false;
+// News Card Component with Reverse 3D Tilt Effect
+const NewsCard: React.FC<{ news: NewsItem }> = ({ news }) => {
+  const [rotateX, setRotateX] = useState(0);
+  const [rotateY, setRotateY] = useState(0);
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    const card = e.currentTarget;
+    const rect = card.getBoundingClientRect();
+    const x = e.clientX - rect.left;
+    const y = e.clientY - rect.top;
+    const centerX = rect.width / 2;
+    const centerY = rect.height / 2;
+    // Reverse effect: negative multiplier for opposite tilt
+    const rotateXValue = ((y - centerY) / centerY) * 8; // Positive instead of negative
+    const rotateYValue = ((x - centerX) / centerX) * -8; // Negative instead of positive
+    setRotateX(rotateXValue);
+    setRotateY(rotateYValue);
+  };
+
+  const handleMouseLeave = () => {
+    setRotateX(0);
+    setRotateY(0);
+  };
 
   const truncateText = (text: string, maxLength: number) => {
     if (text.length <= maxLength) return text;
     return text.substring(0, maxLength) + '...';
   };
+
+  return (
+    <Link
+      href={`/article/${news.id}`}
+      className="block"
+    >
+      <div
+        className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-2xl transition-all duration-300"
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        style={{
+          transform: `perspective(1200px) rotateX(${rotateX}deg) rotateY(${rotateY}deg) translateZ(${rotateX !== 0 || rotateY !== 0 ? '20px' : '0px'})`,
+          transition: 'transform 0.2s ease-out, box-shadow 0.3s ease',
+        }}
+      >
+        {news.imageUrl && (
+          <div className="h-48 bg-gray-200 overflow-hidden">
+            <img
+              src={news.imageUrl}
+              alt={news.title}
+              className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
+            />
+          </div>
+        )}
+        <div className="p-5">
+          <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
+            {news.title}
+          </h3>
+          <p className="text-gray-600 text-sm line-clamp-3 mb-4">
+            {truncateText(news.content, 120)}
+          </p>
+          <div className="flex items-center justify-between">
+            <span className="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
+              {news.category}
+            </span>
+            <span className="text-xs text-gray-500" suppressHydrationWarning>
+              {new Date(news.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
+            </span>
+          </div>
+        </div>
+      </div>
+    </Link>
+  );
+};
+
+const LandingPage: React.FC<LandingPageProps> = ({ supremeCourtNews = [], highCourtNews = [] }) => {
+  const loading = false;
 
   return (
     <>
@@ -76,37 +144,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ supremeCourtNews = [], highCo
                   </div>
                 ) : supremeCourtNews.length > 0 ? (
                   supremeCourtNews.map((news) => (
-                    <Link
-                      key={news.id}
-                      href={`/article/${news.id}`}
-                      className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-                    >
-                      {news.imageUrl && (
-                        <div className="h-48 bg-gray-200 overflow-hidden">
-                          <img
-                            src={news.imageUrl}
-                            alt={news.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
-                      <div className="p-5">
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
-                          {news.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                          {truncateText(news.content, 120)}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
-                            {news.category}
-                          </span>
-                          <span className="text-xs text-gray-500" suppressHydrationWarning>
-                            {new Date(news.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
+                    <NewsCard key={news.id} news={news} />
                   ))
                 ) : (
                   <div className="col-span-4 text-center py-16 bg-gray-50 rounded-xl">
@@ -220,37 +258,7 @@ const LandingPage: React.FC<LandingPageProps> = ({ supremeCourtNews = [], highCo
                   </div>
                 ) : highCourtNews.length > 0 ? (
                   highCourtNews.map((news) => (
-                    <Link
-                      key={news.id}
-                      href={`/article/${news.id}`}
-                      className="bg-white border border-gray-200 rounded-xl overflow-hidden hover:shadow-xl transition-all duration-300 transform hover:-translate-y-1"
-                    >
-                      {news.imageUrl && (
-                        <div className="h-48 bg-gray-200 overflow-hidden">
-                          <img
-                            src={news.imageUrl}
-                            alt={news.title}
-                            className="w-full h-full object-cover hover:scale-105 transition-transform duration-300"
-                          />
-                        </div>
-                      )}
-                      <div className="p-5">
-                        <h3 className="font-bold text-lg text-gray-900 mb-2 line-clamp-2">
-                          {news.title}
-                        </h3>
-                        <p className="text-gray-600 text-sm line-clamp-3 mb-4">
-                          {truncateText(news.content, 120)}
-                        </p>
-                        <div className="flex items-center justify-between">
-                          <span className="text-xs text-purple-600 font-semibold bg-purple-50 px-3 py-1 rounded-full">
-                            {news.category}
-                          </span>
-                          <span className="text-xs text-gray-500" suppressHydrationWarning>
-                            {new Date(news.createdAt).toLocaleDateString('en-IN', { year: 'numeric', month: 'short', day: 'numeric' })}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
+                    <NewsCard key={news.id} news={news} />
                   ))
                 ) : (
                   <div className="col-span-4 text-center py-16 bg-gray-50 rounded-xl">

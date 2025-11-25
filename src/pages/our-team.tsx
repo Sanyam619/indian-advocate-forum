@@ -110,11 +110,14 @@ export default function OurTeamPage() {
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [cityFilter, setCityFilter] = useState('');
 
-  // Filter members based on search query (case-insensitive)
-  const filteredMembers = members.filter(member =>
-    member.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  // Filter members based on city and name search
+  const filteredMembers = members.filter(member => {
+    const matchesCity = !cityFilter || member.placeOfPractice.toLowerCase().includes(cityFilter.toLowerCase());
+    const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase());
+    return matchesCity && matchesSearch;
+  });
 
   useEffect(() => {
     const fetchTeamMembers = async () => {
@@ -282,32 +285,90 @@ export default function OurTeamPage() {
                   </div>
                 </div>
 
-                {/* Search Bar */}
-                <div className="max-w-2xl mx-auto mb-8">
-                  <div className="relative">
-                    <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      type="text"
-                      placeholder="Search team members by name..."
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm"
-                    />
-                    {searchQuery && (
-                      <button
-                        onClick={() => setSearchQuery('')}
-                        className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
-                      >
-                        <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
-                        </svg>
-                      </button>
-                    )}
+                {/* Search Bars - City and Name */}
+                <div className="max-w-4xl mx-auto mb-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {/* City Search */}
+                    <div className="relative">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <MapPinIcon className="h-5 w-5 text-purple-600" />
+                        Search by City
+                      </label>
+                      <div className="relative">
+                        <MapPinIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Type city name..."
+                          value={cityFilter}
+                          onChange={(e) => setCityFilter(e.target.value)}
+                          className="w-full pl-12 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm"
+                        />
+                        {cityFilter && (
+                          <button
+                            onClick={() => setCityFilter('')}
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Name Search */}
+                    <div className="relative">
+                      <label className="flex items-center gap-2 text-sm font-semibold text-gray-700 mb-2">
+                        <MagnifyingGlassIcon className="h-5 w-5 text-purple-600" />
+                        Search by Name
+                      </label>
+                      <div className="relative">
+                        <MagnifyingGlassIcon className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                        <input
+                          type="text"
+                          placeholder="Type member name..."
+                          value={searchQuery}
+                          onChange={(e) => setSearchQuery(e.target.value)}
+                          className="w-full pl-12 pr-10 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-purple-500 focus:border-purple-500 shadow-sm"
+                        />
+                        {searchQuery && (
+                          <button
+                            onClick={() => setSearchQuery('')}
+                            className="absolute right-4 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                          >
+                            <svg className="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+                            </svg>
+                          </button>
+                        )}
+                      </div>
+                    </div>
                   </div>
-                  {searchQuery && (
-                    <p className="text-sm text-gray-600 mt-2 text-center">
-                      Found {filteredMembers.length} member{filteredMembers.length !== 1 ? 's' : ''} matching "{searchQuery}"
-                    </p>
+                  
+                  {/* Search Results Info */}
+                  {(cityFilter || searchQuery) && (
+                    <div className="mt-4 text-center">
+                      <p className="text-sm text-gray-600">
+                        {filteredMembers.length > 0 ? (
+                          <>
+                            Found <span className="font-bold text-purple-600">{filteredMembers.length}</span> member{filteredMembers.length !== 1 ? 's' : ''}
+                            {cityFilter && <> in cities matching "<span className="font-semibold">{cityFilter}</span>"</>}
+                            {searchQuery && <> with name matching "<span className="font-semibold">{searchQuery}</span>"</>}
+                          </>
+                        ) : (
+                          <span className="text-orange-600">No members found with current search</span>
+                        )}
+                      </p>
+                      <button
+                        onClick={() => {
+                          setSearchQuery('');
+                          setCityFilter('');
+                        }}
+                        className="mt-2 text-sm text-purple-600 hover:text-purple-700 font-medium underline"
+                      >
+                        Clear all filters
+                      </button>
+                    </div>
                   )}
                 </div>
 
@@ -318,8 +379,23 @@ export default function OurTeamPage() {
                     ))}
                   </div>
                 ) : (
-                  <div className="text-center py-12">
-                    <p className="text-gray-600 text-lg">No team members found matching "{searchQuery}"</p>
+                  <div className="text-center py-12 bg-gray-50 rounded-2xl">
+                    <div className="inline-flex items-center justify-center w-16 h-16 bg-purple-100 rounded-full mb-4">
+                      <MagnifyingGlassIcon className="h-8 w-8 text-purple-600" />
+                    </div>
+                    <p className="text-gray-600 text-lg mb-2">No team members found</p>
+                    <p className="text-gray-500 text-sm mb-4">
+                      Try adjusting your search
+                    </p>
+                    <button
+                      onClick={() => {
+                        setSearchQuery('');
+                        setCityFilter('');
+                      }}
+                      className="text-purple-600 hover:text-purple-700 font-medium"
+                    >
+                      Clear all filters
+                    </button>
                   </div>
                 )}
               </div>
