@@ -155,8 +155,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
   };
 
   const supremeCourtOptions = [
-    { name: "SC Judgements", href: '/supreme-court/judgements' },
-    { name: "Orders and Observations of SC", href: '/supreme-court/orders-observations' }
+    { name: "SC Judgements", href: '/supreme-court/judgements' }
   ];
 
   const supremeCourtRef = useRef<HTMLDivElement>(null);
