@@ -384,18 +384,9 @@ export default function OurTeamPage() {
                       <MagnifyingGlassIcon className="h-8 w-8 text-purple-600" />
                     </div>
                     <p className="text-gray-600 text-lg mb-2">No team members found</p>
-                    <p className="text-gray-500 text-sm mb-4">
+                    <p className="text-gray-500 text-sm">
                       Try adjusting your search
                     </p>
-                    <button
-                      onClick={() => {
-                        setSearchQuery('');
-                        setCityFilter('');
-                      }}
-                      className="text-purple-600 hover:text-purple-700 font-medium"
-                    >
-                      Clear all filters
-                    </button>
                   </div>
                 )}
               </div>
