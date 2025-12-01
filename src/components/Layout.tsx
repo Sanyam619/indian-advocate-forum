@@ -162,38 +162,29 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
   const highCourtRef = useRef<HTMLDivElement>(null);
   const joinSCRef = useRef<HTMLDivElement>(null);
 
-  // Scroll detection state
+  // Scroll detection for hiding first navbar
   const [showFirstNavbar, setShowFirstNavbar] = useState(true);
-  const [lastScrollY, setLastScrollY] = useState(0);
-  const scrollTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const lastScrollYRef = useRef(0);
 
-  // Handle scroll behavior with debounce to prevent shaking
   useEffect(() => {
     let ticking = false;
-    
+
     const handleScroll = () => {
       if (!ticking) {
         window.requestAnimationFrame(() => {
           const currentScrollY = window.scrollY;
+          const scrollDelta = Math.abs(currentScrollY - lastScrollYRef.current);
           
-          // Clear any existing timeout
-          if (scrollTimeoutRef.current) {
-            clearTimeout(scrollTimeoutRef.current);
-          }
-          
-          // Debounce the state update to prevent jitter
-          scrollTimeoutRef.current = setTimeout(() => {
-            // Show first navbar when scrolling up or at top
-            if (currentScrollY < lastScrollY || currentScrollY < 10) {
+          // Only update if scroll delta is significant (reduces jitter)
+          if (scrollDelta > 5) {
+            if (currentScrollY < lastScrollYRef.current || currentScrollY < 10) {
               setShowFirstNavbar(true);
-            } 
-            // Hide first navbar when scrolling down and past threshold
-            else if (currentScrollY > lastScrollY && currentScrollY > 50) {
+            } else if (currentScrollY > lastScrollYRef.current && currentScrollY > 50) {
               setShowFirstNavbar(false);
             }
             
-            setLastScrollY(currentScrollY);
-          }, 10); // Small debounce to smooth out rapid changes
+            lastScrollYRef.current = currentScrollY;
+          }
           
           ticking = false;
         });
@@ -203,13 +194,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
     };
 
     window.addEventListener('scroll', handleScroll, { passive: true });
-    return () => {
-      window.removeEventListener('scroll', handleScroll);
-      if (scrollTimeoutRef.current) {
-        clearTimeout(scrollTimeoutRef.current);
-      }
-    };
-  }, [lastScrollY]);
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
@@ -217,13 +203,12 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
       <div className="sticky top-0 z-50 bg-white shadow-md">
         {/* Top Header Bar - Logo + Key Actions + User Controls */}
         <div 
-          className={`bg-white border-b border-gray-100 transition-transform duration-300 ease-in-out ${
-            showFirstNavbar ? 'translate-y-0' : '-translate-y-full'
-          }`}
-          style={{ 
+          className="bg-white border-b border-gray-100 transition-transform duration-300 ease-in-out will-change-transform"
+          style={{
+            transform: showFirstNavbar ? 'translateY(0)' : 'translateY(-100%)',
             position: showFirstNavbar ? 'relative' : 'absolute',
             width: '100%',
-            top: 0
+            top: 0,
           }}
         >
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -244,60 +229,32 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
               </Link>
             </div>
 
-            {/* Primary Actions - Find Advocates, Join SC & Podcasts */}
-            <div className="hidden lg:flex items-center space-x-8">
+            {/* Primary Actions - Find Advocates, Video Conference & Podcasts */}
+            <div className="hidden lg:flex items-center space-x-4">
               <Link
                 href="/search-advocates"
                 className={`${
                   router.pathname === '/search-advocates'
                     ? 'text-purple-600'
                     : 'text-gray-700 hover:text-purple-600'
-                } flex items-center px-3 py-2 text-sm font-medium transition-colors duration-200`}
+                } flex items-center px-2 py-2 text-sm font-medium transition-colors duration-200`}
               >
                 <MagnifyingGlassIcon className="h-4 w-4 mr-2" />
                 Find Advocates
               </Link>
 
-              {/* Join SC Dropdown */}
-              <div 
-                ref={joinSCRef} 
-                className="relative group flex items-center"
+              {/* Video Conference */}
+              <Link
+                href="/video-conference"
+                className={`${
+                  router.pathname === '/video-conference'
+                    ? 'text-purple-600'
+                    : 'text-gray-700 hover:text-purple-600'
+                } flex items-center px-2 py-2 text-sm font-medium transition-colors duration-200`}
               >
-                <button
-                  className="text-gray-700 hover:text-purple-600 flex items-center px-3 py-2 text-sm font-medium transition-colors duration-200"
-                >
-                  <VideoCameraIcon className="h-4 w-4 mr-2" />
-                  Join SC
-                  <svg className="ml-2 h-4 w-4 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
-                </button>
-                
-                <div className="absolute left-0 top-full w-64 z-50">
-                  <div className="hidden group-hover:block">
-                    <div className="pt-2">
-                      <div className="bg-white rounded-lg shadow-lg py-2 border border-gray-200 max-h-96 overflow-y-auto">
-                        <div className="px-4 py-2 bg-purple-50 border-b border-purple-100">
-                          <p className="text-xs font-semibold text-purple-900 uppercase tracking-wide">
-                            Supreme Court VC Links
-                          </p>
-                        </div>
-                        {supremeCourtVCLinks.map((court, index) => (
-                          <a
-                            key={index}
-                            href={court.url}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-150"
-                          >
-                            {court.name}
-                          </a>
-                        ))}
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
+                <VideoCameraIcon className="h-4 w-4 mr-2" />
+                Video Conference
+              </Link>
 
               <Link
                 href="/podcasts"
@@ -305,7 +262,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
                   router.pathname === '/podcasts'
                     ? 'text-purple-600'
                     : 'text-gray-700 hover:text-purple-600'
-                } flex items-center px-3 py-2 text-sm font-medium transition-colors duration-200`}
+                } flex items-center px-2 py-2 text-sm font-medium transition-colors duration-200`}
               >
                 <PlayIcon className="h-4 w-4 mr-2" />
                 Podcasts
@@ -317,7 +274,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
                   router.pathname === '/our-team' || router.pathname.startsWith('/our-team/')
                     ? 'text-purple-600'
                     : 'text-gray-700 hover:text-purple-600'
-                } flex items-center px-3 py-2 text-sm font-medium transition-colors duration-200`}
+                } flex items-center px-2 py-2 text-sm font-medium transition-colors duration-200`}
               >
                 <UserGroupIcon className="h-4 w-4 mr-2" />
                 Our Team
@@ -539,18 +496,47 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
                 </div>
               </div>
 
-              {/* Video Conference */}
-              <Link
-                href="/video-conference"
-                className={`${
-                  router.pathname === '/video-conference'
-                    ? 'text-purple-600 border-b-2 border-purple-600'
-                    : 'text-gray-700 hover:text-purple-600 border-b-2 border-transparent hover:border-purple-300'
-                } flex items-center px-3 py-4 text-sm font-medium transition-colors duration-200 whitespace-nowrap`}
+              {/* Join SC Dropdown */}
+              <div 
+                ref={joinSCRef} 
+                className="relative group flex items-center"
               >
-                <VideoCameraIcon className="h-4 w-4 mr-2" />
-                Video Conference
-              </Link>
+                <button
+                  className="text-gray-700 hover:text-purple-600 border-b-2 border-transparent hover:border-purple-300 flex items-center px-3 py-4 text-sm font-medium transition-colors duration-200 whitespace-nowrap"
+                >
+                  <VideoCameraIcon className="h-4 w-4 mr-2" />
+                  Join SC
+                  <svg className="ml-2 h-4 w-4 transition-transform group-hover:rotate-180" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {/* Dropdown with high z-index to appear above everything */}
+                <div className="absolute left-0 top-full w-64 z-[100]">
+                  <div className="hidden group-hover:block">
+                    <div className="pt-2">
+                      <div className="bg-white rounded-lg shadow-lg py-2 border border-gray-200 max-h-96 overflow-y-auto">
+                        <div className="px-4 py-2 bg-purple-50 border-b border-purple-100">
+                          <p className="text-xs font-semibold text-purple-900 uppercase tracking-wide">
+                            Supreme Court VC Links
+                          </p>
+                        </div>
+                        {supremeCourtVCLinks.map((court, index) => (
+                          <a
+                            key={index}
+                            href={court.url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="block px-4 py-2.5 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors duration-150"
+                          >
+                            {court.name}
+                          </a>
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
 
               {/* Judges */}
               <div className="relative group flex items-center">
@@ -1152,6 +1138,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
 
       {/* News Ticker */}
       <NewsTicker speed={25} pauseOnHover={true} showLabel={true} />
+      
       </div>
       {/* End of Sticky Header Container */}
 

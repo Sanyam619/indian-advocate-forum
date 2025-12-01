@@ -160,74 +160,104 @@ const LandingPage: React.FC<LandingPageProps> = ({ supremeCourtNews = [], highCo
           {/* Advertisement Section 1 */}
           <section className="py-12 bg-gradient-to-r from-purple-50 to-indigo-50">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-              <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-12 overflow-hidden relative">
-                {/* Background Pattern */}
-                <div className="absolute inset-0 opacity-10">
-                  <div className="absolute transform rotate-12 -right-20 -top-20">
-                    <ScaleIcon className="h-64 w-64 text-white" />
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* First Ad - Kumar & Associates */}
+                <div className="bg-gradient-to-br from-purple-600 to-indigo-700 rounded-2xl shadow-2xl p-8 overflow-hidden relative">
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute transform rotate-12 -right-20 -top-20">
+                      <ScaleIcon className="h-48 w-48 text-white" />
+                    </div>
+                  </div>
+                  
+                  <div className="relative z-10 text-white">
+                    <div className="inline-block bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
+                      <span className="text-xs font-semibold">PREMIUM LEGAL SERVICES</span>
+                    </div>
+                    <h3 className="text-3xl font-bold mb-3">Kumar & Associates</h3>
+                    <p className="text-lg text-purple-100 mb-4">Leading Law Firm in Supreme Court Practice</p>
+                    <ul className="space-y-2 mb-6">
+                      <li className="flex items-center">
+                        <svg className="h-5 w-5 mr-2 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm">25+ Years of Experience</span>
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-5 w-5 mr-2 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm">500+ Cases Won</span>
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-5 w-5 mr-2 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm">Expert Supreme Court Advocates</span>
+                      </li>
+                    </ul>
+                    <div className="space-y-3">
+                      <div className="bg-white bg-opacity-20 rounded-lg p-3">
+                        <p className="text-xs text-purple-100">Phone</p>
+                        <p className="font-semibold">+91 98765 43210</p>
+                      </div>
+                      <div className="bg-white bg-opacity-20 rounded-lg p-3">
+                        <p className="text-xs text-purple-100">Email</p>
+                        <p className="font-semibold text-sm">info@kumarassociates.in</p>
+                      </div>
+                    </div>
+                    <button className="mt-6 bg-white text-purple-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-purple-50 transition-all w-full">
+                      Schedule Consultation
+                    </button>
                   </div>
                 </div>
-                
-                <div className="relative z-10">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
-                    <div className="text-white">
-                      <div className="inline-block bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
-                        <span className="text-sm font-semibold">PREMIUM LEGAL SERVICES</span>
-                      </div>
-                      <h3 className="text-4xl md:text-5xl font-bold mb-4">
-                        Kumar & Associates
-                      </h3>
-                      <p className="text-xl text-purple-100 mb-6">
-                        Leading Law Firm in Supreme Court Practice
-                      </p>
-                      <ul className="space-y-3 mb-8">
-                        <li className="flex items-center">
-                          <svg className="h-6 w-6 mr-3 text-green-300" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-purple-100">25+ Years of Experience</span>
-                        </li>
-                        <li className="flex items-center">
-                          <svg className="h-6 w-6 mr-3 text-green-300" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-purple-100">500+ Cases Won</span>
-                        </li>
-                        <li className="flex items-center">
-                          <svg className="h-6 w-6 mr-3 text-green-300" fill="currentColor" viewBox="0 0 20 20">
-                            <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
-                          </svg>
-                          <span className="text-purple-100">Expert Supreme Court Advocates</span>
-                        </li>
-                      </ul>
-                      <button className="bg-white text-purple-700 px-8 py-4 rounded-xl font-bold text-lg hover:bg-purple-50 transition-all transform hover:scale-105 shadow-lg">
-                        Schedule Consultation
-                      </button>
+
+                {/* Second Ad - Placeholder for another advertiser */}
+                <div className="bg-gradient-to-br from-indigo-600 to-blue-700 rounded-2xl shadow-2xl p-8 overflow-hidden relative">
+                  <div className="absolute inset-0 opacity-10">
+                    <div className="absolute transform -rotate-12 -left-20 -top-20">
+                      <ScaleIcon className="h-48 w-48 text-white" />
                     </div>
-                    
-                    <div className="bg-white bg-opacity-10 backdrop-blur-md rounded-xl p-8 border border-white border-opacity-20">
-                      <div className="text-center mb-6">
-                        <div className="bg-white rounded-full p-6 inline-block mb-4">
-                          <ScaleIcon className="h-16 w-16 text-purple-600" />
-                        </div>
-                        <h4 className="text-2xl font-bold text-white mb-2">Contact Us</h4>
-                        <p className="text-purple-100">Expert legal representation</p>
+                  </div>
+                  
+                  <div className="relative z-10 text-white">
+                    <div className="inline-block bg-white bg-opacity-20 backdrop-blur-sm px-4 py-2 rounded-full mb-4">
+                      <span className="text-xs font-semibold">LEGAL EXCELLENCE</span>
+                    </div>
+                    <h3 className="text-3xl font-bold mb-3">Your Law Firm Name</h3>
+                    <p className="text-lg text-blue-100 mb-4">Specialized Legal Services</p>
+                    <ul className="space-y-2 mb-6">
+                      <li className="flex items-center">
+                        <svg className="h-5 w-5 mr-2 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm">Professional Expertise</span>
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-5 w-5 mr-2 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm">Nationwide Coverage</span>
+                      </li>
+                      <li className="flex items-center">
+                        <svg className="h-5 w-5 mr-2 text-green-300" fill="currentColor" viewBox="0 0 20 20">
+                          <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
+                        </svg>
+                        <span className="text-sm">Client-Focused Approach</span>
+                      </li>
+                    </ul>
+                    <div className="space-y-3">
+                      <div className="bg-white bg-opacity-20 rounded-lg p-3">
+                        <p className="text-xs text-blue-100">Phone</p>
+                        <p className="font-semibold">+91 XXXXX XXXXX</p>
                       </div>
-                      <div className="space-y-4">
-                        <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                          <p className="text-sm text-purple-100 mb-1">Phone</p>
-                          <p className="text-white font-semibold text-lg">+91 98765 43210</p>
-                        </div>
-                        <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                          <p className="text-sm text-purple-100 mb-1">Email</p>
-                          <p className="text-white font-semibold text-lg">info@kumarassociates.in</p>
-                        </div>
-                        <div className="bg-white bg-opacity-20 rounded-lg p-4">
-                          <p className="text-sm text-purple-100 mb-1">Office</p>
-                          <p className="text-white font-semibold">Supreme Court Complex, New Delhi</p>
-                        </div>
+                      <div className="bg-white bg-opacity-20 rounded-lg p-3">
+                        <p className="text-xs text-blue-100">Email</p>
+                        <p className="font-semibold text-sm">contact@lawfirm.in</p>
                       </div>
                     </div>
+                    <button className="mt-6 bg-white text-indigo-700 px-6 py-3 rounded-xl font-bold text-sm hover:bg-blue-50 transition-all w-full">
+                      Get in Touch
+                    </button>
                   </div>
                 </div>
               </div>

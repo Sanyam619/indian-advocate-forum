@@ -114,8 +114,8 @@ export default function OurTeamPage() {
 
   // Filter members based on city and name search
   const filteredMembers = members.filter(member => {
-    const matchesCity = !cityFilter || member.placeOfPractice.toLowerCase().includes(cityFilter.toLowerCase());
-    const matchesSearch = member.name.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesCity = !cityFilter || (member.placeOfPractice && member.placeOfPractice.toLowerCase().includes(cityFilter.toLowerCase()));
+    const matchesSearch = member.name && member.name.toLowerCase().includes(searchQuery.toLowerCase());
     return matchesCity && matchesSearch;
   });
 
