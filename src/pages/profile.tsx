@@ -59,16 +59,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
 
       const user = await Promise.race([userPromise, timeoutPromise]) as any;
 
-      // Only redirect to profile-setup if user exists but is not verified
-      // If user doesn't exist, allow profile access (will be handled by fallback)
-      if (user && !user.isVerified) {
-        return {
-          redirect: {
-            destination: '/profile-setup',
-            permanent: false,
-          },
-        };
-      }
+      // Allow access even if not verified; show prompts on the client instead
 
       // If user exists in database, return their data
       if (user) {
@@ -82,7 +73,7 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
               yearsOfExperience: user.yearsOfExperience || '',
               profilePhoto: user.profilePhoto || session.user.picture || '',
               isProfileSetup: user.isProfileSetup || false,
-              isVerified: user.isVerified || true,
+              isVerified: Boolean(user.isVerified),
               city: user.city || '',
               specialization: user.specialization || [],
               bio: user.bio || '',
@@ -90,8 +81,8 @@ export const getServerSideProps: GetServerSideProps = withPageAuthRequired({
               languages: user.languages || [],
               officeAddress: user.officeAddress || '',
               isPremium: user.isPremium || false,
-              premiumPlan: user.premiumPlan || null,
-              premiumExpiresAt: user.premiumExpiresAt ? user.premiumExpiresAt.toISOString() : null,
+              premiumPlan: user.premiumPlan || '',
+              premiumExpiresAt: user.premiumExpiresAt ? user.premiumExpiresAt.toISOString() : '',
             },
           },
         };

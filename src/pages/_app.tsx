@@ -27,6 +27,33 @@ function App({ Component, pageProps }: AppProps) {
     }
   }, [router.pathname]);
 
+  // Debug route navigation to diagnose profile navigation issues
+  useEffect(() => {
+    const handleStart = (url: string) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('🚦 routeChangeStart:', url);
+      }
+    };
+    const handleComplete = (url: string) => {
+      if (process.env.NODE_ENV === 'development') {
+        console.log('✅ routeChangeComplete:', url);
+      }
+    };
+    const handleError = (err: unknown, url: string) => {
+      console.error('❌ routeChangeError:', url, err);
+    };
+
+    router.events.on('routeChangeStart', handleStart);
+    router.events.on('routeChangeComplete', handleComplete);
+    router.events.on('routeChangeError', handleError);
+
+    return () => {
+      router.events.off('routeChangeStart', handleStart);
+      router.events.off('routeChangeComplete', handleComplete);
+      router.events.off('routeChangeError', handleError);
+    };
+  }, [router.events]);
+
   return (
     <UserProvider user={pageProps.user}>
       <Head>

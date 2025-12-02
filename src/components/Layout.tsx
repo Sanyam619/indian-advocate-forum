@@ -61,18 +61,26 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
   }, [userProfilePhoto]);  // Handle click outside of profile menu
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
+      const target = event.target as Node;
+      
+      // Don't close if clicking on a link or button inside the menu
+      if (profileMenuRef.current && profileMenuRef.current.contains(target)) {
+        return; // Let the menu item handle the click
+      }
+      
       if (
         profileMenuRef.current && 
         profileButtonRef.current && 
-        !profileMenuRef.current.contains(event.target as Node) &&
-        !profileButtonRef.current.contains(event.target as Node)
+        !profileMenuRef.current.contains(target) &&
+        !profileButtonRef.current.contains(target)
       ) {
         setIsProfileMenuOpen(false);
       }
     }
 
-    document.addEventListener('mousedown', handleClickOutside);
-    return () => document.removeEventListener('mousedown', handleClickOutside);
+    // Use 'click' instead of 'mousedown' to allow menu items to handle clicks first
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, []);
 
   const handleLogout = () => {
@@ -200,10 +208,10 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Sticky Header Container */}
-      <div className="sticky top-0 z-50 bg-white shadow-md">
+      <div className="sticky top-0 z-50 bg-white shadow-md overflow-visible">
         {/* Top Header Bar - Logo + Key Actions + User Controls */}
         <div 
-          className="bg-white border-b border-gray-100 transition-transform duration-300 ease-in-out will-change-transform"
+          className="bg-white border-b border-gray-100 transition-transform duration-300 ease-in-out will-change-transform overflow-visible"
           style={{
             transform: showFirstNavbar ? 'translateY(0)' : 'translateY(-100%)',
             position: showFirstNavbar ? 'relative' : 'absolute',
@@ -211,8 +219,8 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
             top: 0,
           }}
         >
-          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div className="flex justify-between items-center h-16">
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-visible">
+            <div className="flex justify-between items-center h-16 overflow-visible">
               {/* Logo and site name */}
               <div className="flex items-center">
               <Link href="/" className="flex items-center space-x-3">
@@ -282,7 +290,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
             </div>
 
             {/* User Controls */}
-            <div className="flex items-center space-x-4">
+            <div className="flex items-center space-x-4 overflow-visible">
               {/* Mobile menu button */}
               <div className="lg:hidden">
                 <button
@@ -353,38 +361,6 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
                         </div>
                       )}
                     </button>
-
-                    {/* Profile Dropdown Menu */}
-                    {isProfileMenuOpen && (
-                      <div 
-                        ref={profileMenuRef}
-                        className="absolute right-0 top-12 w-48 bg-white rounded-lg shadow-lg py-1 z-50 border border-gray-200"
-                      >
-                        <Link
-                          href="/profile"
-                          className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600"
-                          onClick={() => setIsProfileMenuOpen(false)}
-                        >
-                          My Profile
-                        </Link>
-                        {profileData?.isPremium && (
-                          <Link
-                            href="/premium/manage"
-                            className="block px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600"
-                            onClick={() => setIsProfileMenuOpen(false)}
-                          >
-                            Manage Subscription
-                          </Link>
-                        )}
-                        <a
-                          href="/api/auth/logout"
-                          className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600"
-                          onClick={() => setIsProfileMenuOpen(false)}
-                        >
-                          Sign Out
-                        </a>
-                      </div>
-                    )}
                   </div>
                 </>
               ) : (
@@ -407,6 +383,62 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
           </div>
         </div>
       </div>
+
+      {/* Profile Dropdown Menu - Positioned outside sticky container */}
+      {isProfileMenuOpen && user && (
+        <div 
+          ref={profileMenuRef}
+          className="fixed right-4 top-16 w-48 bg-white rounded-lg shadow-2xl py-1 z-[100] border border-gray-200"
+          style={{
+            marginTop: '0.5rem'
+          }}
+        >
+          <Link
+            href="/profile"
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+            onClick={(e) => {
+              // Mark as navigation before closing to avoid refresh redirect logic
+              sessionStorage.setItem('navigationHappened', 'true');
+              // Close menu after a tick to let Link handle navigation
+              setTimeout(() => setIsProfileMenuOpen(false), 0);
+            }}
+          >
+            My Profile
+          </Link>
+          {profileData?.isPremium && (
+            <div
+              role="button"
+              tabIndex={0}
+              className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors cursor-pointer"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                console.log('🔍 Manage Subscription clicked - navigating to /premium/manage');
+                setIsProfileMenuOpen(false);
+                sessionStorage.setItem('navigationHappened', 'true');
+                router.push('/premium/manage');
+              }}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                  e.preventDefault();
+                  setIsProfileMenuOpen(false);
+                  sessionStorage.setItem('navigationHappened', 'true');
+                  router.push('/premium/manage');
+                }
+              }}
+            >
+              Manage Subscription
+            </div>
+          )}
+          <a
+            href="/api/auth/logout"
+            className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-purple-50 hover:text-purple-600 transition-colors"
+            onClick={() => setIsProfileMenuOpen(false)}
+          >
+            Sign Out
+          </a>
+        </div>
+      )}
 
       {/* Main Navigation Bar - Content & Court Sections */}
       <nav className="bg-white shadow-sm border-b border-gray-200">
