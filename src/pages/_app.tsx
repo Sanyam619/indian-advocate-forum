@@ -25,7 +25,7 @@ function App({ Component, pageProps }: AppProps) {
         }
       }
     }
-  }, [router.pathname]);
+  }, []);
 
   // Debug route navigation to diagnose profile navigation issues
   useEffect(() => {
