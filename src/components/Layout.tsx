@@ -46,20 +46,23 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
 
   // Check for showAuth query parameter and auto-open modal
   useEffect(() => {
+    if (!router.isReady) return;
+    
     if (router.query.showAuth === 'true') {
       setShowAuthModal(true);
       // Clean up the URL by removing the query parameter
       const { showAuth, ...restQuery } = router.query;
-      router.replace({
+      const newUrl = {
         pathname: router.pathname,
         query: restQuery
-      }, undefined, { shallow: true }).catch((e) => {
-        // Ignore errors during navigation (e.g., if user navigates away quickly)
+      };
+      
+      router.replace(newUrl, undefined, { shallow: true }).catch((e) => {
+        // Ignore errors during navigation
         if (e?.cancelled) return;
-        console.error('Error replacing route:', e);
       });
     }
-  }, [router]);
+  }, [router.isReady, router.query.showAuth, router.pathname]);
 
   // Debug log for profile photo
   useEffect(() => {
