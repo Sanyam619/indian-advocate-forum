@@ -44,6 +44,19 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
   // Get user profile photo from the custom hook, fallback to Auth0 picture
   const userProfilePhoto = profileData?.profilePhoto || user?.picture;
 
+  // Check for showAuth query parameter and auto-open modal
+  useEffect(() => {
+    if (router.query.showAuth === 'true') {
+      setShowAuthModal(true);
+      // Clean up the URL by removing the query parameter
+      const { showAuth, ...restQuery } = router.query;
+      router.replace({
+        pathname: router.pathname,
+        query: restQuery
+      }, undefined, { shallow: true });
+    }
+  }, [router.query.showAuth]);
+
   // Debug log for profile photo
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {

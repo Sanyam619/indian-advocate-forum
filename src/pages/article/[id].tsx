@@ -1,17 +1,23 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { GetServerSideProps } from 'next';
+import { getSession } from '@auth0/nextjs-auth0';
 import Head from 'next/head';
 import Link from 'next/link';
 import Layout from '../../components/Layout';
+import PremiumModal from '@/components/PremiumModal';
 import { NewsItem } from '@/types/news';
-import { Calendar, Clock, ArrowLeft, Tag } from 'lucide-react';
+import { Calendar, Clock, ArrowLeft, Tag, Lock, Sparkles } from 'lucide-react';
 import prisma from '@/lib/prisma';
 
 interface ArticlePageProps {
   article: NewsItem | null;
+  isPremium: boolean;
+  isAuthenticated: boolean;
 }
 
-const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
+const ArticlePage: React.FC<ArticlePageProps> = ({ article, isPremium, isAuthenticated }) => {
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+
   // Handle case where article is not found
   if (!article) {
     return (
@@ -53,6 +59,13 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
       'Case Analysis': 'bg-yellow-100 text-yellow-800'
     };
     return colors[category as keyof typeof colors] || 'bg-gray-100 text-gray-800';
+  };
+
+  // Get preview content (first 300 characters)
+  const getPreviewContent = (content: string) => {
+    if (!content) return '';
+    const preview = content.substring(0, 300);
+    return preview + (content.length > 300 ? '...' : '');
   };
 
   return (
@@ -148,11 +161,94 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
 
           {/* Article Content */}
           <div className="bg-white rounded-lg shadow-sm p-8 mb-8">
-            <div className="prose prose-lg max-w-none">
-              <div className="text-gray-800 leading-relaxed text-lg whitespace-pre-line">
-                {article.content || 'Article content not available.'}
+            {isPremium ? (
+              // Full content for premium users
+              <div className="prose prose-lg max-w-none">
+                <div className="text-gray-800 leading-relaxed text-lg whitespace-pre-line">
+                  {article.content || 'Article content not available.'}
+                </div>
               </div>
-            </div>
+            ) : (
+              // Preview content with premium upgrade prompt for non-premium users
+              <div>
+                <div className="prose prose-lg max-w-none mb-8">
+                  <div className="text-gray-800 leading-relaxed text-lg whitespace-pre-line">
+                    {getPreviewContent(article.content || 'Article content not available.')}
+                  </div>
+                </div>
+
+                {/* Premium Content Blur Overlay */}
+                <div className="relative">
+                  {/* Blurred preview text */}
+                  <div className="text-gray-800 leading-relaxed text-lg whitespace-pre-line blur-sm select-none pointer-events-none opacity-50">
+                    {article.content?.substring(300, 800) || ''}
+                  </div>
+
+                  {/* Premium Upgrade Card Overlay */}
+                  <div className="absolute inset-0 flex items-center justify-center -mt-20">
+                    <div className="bg-white rounded-xl shadow-2xl p-8 max-w-md mx-4 border-2 border-purple-200">
+                      <div className="text-center">
+                        <div className="inline-flex items-center justify-center w-16 h-16 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full mb-4">
+                          <Lock className="h-8 w-8 text-white" />
+                        </div>
+                        
+                        <h3 className="text-2xl font-bold text-gray-900 mb-2">
+                          Premium Content
+                        </h3>
+                        
+                        <p className="text-gray-600 mb-6">
+                          Unlock full access to this article and thousands more with a premium membership
+                        </p>
+
+                        <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-lg p-4 mb-6">
+                          <ul className="text-left space-y-2 text-sm">
+                            <li className="flex items-start gap-2">
+                              <svg className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-gray-700">Read complete articles without restrictions</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <svg className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-gray-700">Search and connect with advocates</span>
+                            </li>
+                            <li className="flex items-start gap-2">
+                              <svg className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                              </svg>
+                              <span className="text-gray-700">Access exclusive legal resources</span>
+                            </li>
+                          </ul>
+                        </div>
+
+                        {isAuthenticated ? (
+                          <button
+                            onClick={() => setShowPremiumModal(true)}
+                            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                          >
+                            <Sparkles className="h-5 w-5" />
+                            Upgrade to Premium
+                          </button>
+                        ) : (
+                          <Link
+                            href="/auth?returnTo=/article/[id]"
+                            className="w-full inline-flex items-center justify-center gap-2 px-6 py-3 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg hover:shadow-xl"
+                          >
+                            Sign In to Continue
+                          </Link>
+                        )}
+                        
+                        <p className="mt-4 text-xs text-gray-500">
+                          Starting from ₹199/month • Cancel anytime
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
 
           {/* Tags */}
@@ -198,14 +294,56 @@ const ArticlePage: React.FC<ArticlePageProps> = ({ article }) => {
           </div>
         </div>
       </article>
+
+      {showPremiumModal && (
+        <PremiumModal
+          isOpen={showPremiumModal}
+          onClose={() => setShowPremiumModal(false)}
+        />
+      )}
     </Layout>
   );
 };
 
-export const getServerSideProps: GetServerSideProps = async ({ params }) => {
+export const getServerSideProps: GetServerSideProps = async ({ params, req, res }) => {
   const articleId = params?.id as string;
 
   try {
+    // Check authentication and premium status
+    let isPremium = false;
+    let isAuthenticated = false;
+
+    const session = await getSession(req, res);
+    
+    if (session?.user) {
+      isAuthenticated = true;
+
+      // Check premium status
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Database operation timeout')), 3000);
+      });
+
+      const userPromise = prisma.user.findUnique({
+        where: { auth0Id: session.user.sub },
+        select: {
+          isPremium: true,
+          premiumExpiresAt: true,
+        },
+      });
+
+      try {
+        const user = await Promise.race([userPromise, timeoutPromise]) as any;
+        
+        if (user) {
+          // Check if premium is active and not expired
+          isPremium = user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date());
+        }
+      } catch (error) {
+        console.error('Error checking premium status:', error);
+        // Continue with isPremium = false
+      }
+    }
+
     // Check if Prisma is available
     if (!prisma) {
       console.error('Prisma client not initialized');
@@ -258,6 +396,8 @@ export const getServerSideProps: GetServerSideProps = async ({ params }) => {
     return {
       props: {
         article: formattedArticle,
+        isPremium,
+        isAuthenticated,
       },
     };
   } catch (error) {

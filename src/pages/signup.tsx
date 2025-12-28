@@ -4,6 +4,7 @@ import { loadStripe } from '@stripe/stripe-js';
 import { Elements, PaymentElement, useStripe, useElements } from '@stripe/react-stripe-js';
 import Head from 'next/head';
 import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import AuthModal from '../components/auth/AuthModal';
 
 const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
 
@@ -96,6 +97,7 @@ export default function Signup() {
   const router = useRouter();
   const [step, setStep] = useState<'form' | 'payment'>('form');
   const [clientSecret, setClientSecret] = useState('');
+  const [showAuthModal, setShowAuthModal] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: '',
@@ -581,9 +583,12 @@ export default function Signup() {
 
               <p className="text-center text-sm text-gray-600">
                 Already have an account?{' '}
-                <a href="/api/auth/login" className="font-medium text-purple-600 hover:text-purple-500">
+                <button 
+                  onClick={() => router.push('/?showAuth=true')}
+                  className="font-medium text-purple-600 hover:text-purple-500"
+                >
                   Sign in
-                </a>
+                </button>
               </p>
             </form>
           ) : (
@@ -611,6 +616,10 @@ export default function Signup() {
           )}
         </div>
       </div>
+
+      {showAuthModal && (
+        <AuthModal onClose={() => setShowAuthModal(false)} />
+      )}
     </>
   );
 }

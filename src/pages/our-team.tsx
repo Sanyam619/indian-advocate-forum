@@ -1,7 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
+import { GetServerSideProps } from 'next';
+import { getSession } from '@auth0/nextjs-auth0';
 import Layout from '@/components/Layout';
+import PremiumModal from '@/components/PremiumModal';
+import prisma from '@/lib/prisma';
 import { 
   MapPinIcon, 
   ScaleIcon,
@@ -12,7 +16,7 @@ import {
 } from '@heroicons/react/24/outline';
 
 // Team Member Card Component with 3D Tilt
-const TeamMemberCard: React.FC<{ member: any }> = ({ member }) => {
+const TeamMemberCard: React.FC<{ member: any; isPremium: boolean; onViewProfile: (memberId: string) => void }> = ({ member, isPremium, onViewProfile }) => {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
 
@@ -74,11 +78,12 @@ const TeamMemberCard: React.FC<{ member: any }> = ({ member }) => {
               {member.placeOfPractice}
             </p>
           </div>
-          <Link href={`/our-team/${member.id}`}>
-            <button className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200">
-              View Profile
-            </button>
-          </Link>
+          <button 
+            onClick={() => onViewProfile(member.id)}
+            className="w-full bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-4 py-2 rounded-lg font-medium text-sm transition-all duration-200"
+          >
+            View Profile
+          </button>
         </div>
       </div>
     </div>
@@ -105,12 +110,26 @@ interface TeamMember {
   role: string;
 }
 
-export default function OurTeamPage() {
+interface OurTeamPageProps {
+  isPremium: boolean;
+  isAuthenticated: boolean;
+}
+
+export default function OurTeamPage({ isPremium, isAuthenticated }: OurTeamPageProps) {
   const [president, setPresident] = useState<TeamMember | null>(null);
   const [members, setMembers] = useState<TeamMember[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [cityFilter, setCityFilter] = useState('');
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+
+  const handleViewProfile = (memberId: string) => {
+    if (!isPremium) {
+      setShowPremiumModal(true);
+    } else {
+      window.location.href = `/our-team/${memberId}`;
+    }
+  };
 
   // Filter members based on city and name search
   const filteredMembers = members.filter(member => {
@@ -259,12 +278,13 @@ export default function OurTeamPage() {
                             </span>
                           </div>
 
-                          <Link href={`/our-team/${president.id}`}>
-                            <button className="group/btn bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center gap-3">
-                              View Complete Profile
-                              <ArrowRightIcon className="h-5 w-5 group-hover/btn:translate-x-1 transition-transform duration-200" />
-                            </button>
-                          </Link>
+                          <button 
+                            onClick={() => handleViewProfile(president.id)}
+                            className="group/btn bg-gradient-to-r from-purple-600 to-indigo-600 hover:from-purple-700 hover:to-indigo-700 text-white px-8 py-4 rounded-xl font-bold shadow-lg hover:shadow-xl transition-all duration-200 inline-flex items-center gap-3"
+                          >
+                            View Complete Profile
+                            <ArrowRightIcon className="h-5 w-5 group-hover/btn:translate-x-1 transition-transform duration-200" />
+                          </button>
                         </div>
                       </div>
                     </div>
@@ -375,7 +395,12 @@ export default function OurTeamPage() {
                 {filteredMembers.length > 0 ? (
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
                     {filteredMembers.map((member) => (
-                      <TeamMemberCard key={member.id} member={member} />
+                      <TeamMemberCard 
+                        key={member.id} 
+                        member={member} 
+                        isPremium={isPremium}
+                        onViewProfile={handleViewProfile}
+                      />
                     ))}
                   </div>
                 ) : (
@@ -399,7 +424,62 @@ export default function OurTeamPage() {
             )}
           </div>
         </div>
+
+        {showPremiumModal && (
+          <PremiumModal
+            isOpen={showPremiumModal}
+            onClose={() => setShowPremiumModal(false)}
+          />
+        )}
       </Layout>
     </>
   );
 }
+
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  let isPremium = false;
+  let isAuthenticated = false;
+
+  try {
+    const session = await getSession(req, res);
+    
+    if (session?.user) {
+      isAuthenticated = true;
+
+      // Check premium status with timeout protection
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Database operation timeout')), 3000);
+      });
+
+      const userPromise = prisma.user.findUnique({
+        where: { auth0Id: session.user.sub },
+        select: {
+          isPremium: true,
+          premiumExpiresAt: true,
+        },
+      });
+
+      try {
+        const user = await Promise.race([userPromise, timeoutPromise]) as any;
+        
+        if (user) {
+          // Check if premium is active and not expired
+          isPremium = user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date());
+        }
+      } catch (error) {
+        console.error('Error checking premium status:', error);
+        // Continue with isPremium = false
+      }
+    }
+  } catch (sessionError) {
+    console.error('Session error:', sessionError);
+    // Continue with isAuthenticated = false
+  }
+
+  return {
+    props: {
+      isPremium,
+      isAuthenticated,
+    },
+  };
+};

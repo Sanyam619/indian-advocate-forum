@@ -1,8 +1,85 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Head from 'next/head';
+import { GetServerSideProps } from 'next';
+import { getSession } from '@auth0/nextjs-auth0';
+import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
+import PremiumModal from '@/components/PremiumModal';
+import prisma from '@/lib/prisma';
+import { LockClosedIcon, SparklesIcon } from '@heroicons/react/24/outline';
 
-const LawFirmInternships: React.FC = () => {
+interface LawFirmInternshipsProps {
+  isPremium: boolean;
+  isAuthenticated: boolean;
+}
+
+const LawFirmInternships: React.FC<LawFirmInternshipsProps> = ({ isPremium, isAuthenticated }) => {
+  const router = useRouter();
+  const [showPremiumModal, setShowPremiumModal] = useState(false);
+
+  if (!isPremium) {
+    return (
+      <>
+        <Head>
+          <title>Law Firm Internships - Premium Content | Indian Advocate Forum</title>
+        </Head>
+        <Layout>
+          <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-indigo-50/30 flex items-center justify-center py-12">
+            <div className="max-w-2xl mx-auto px-4">
+              <div className="bg-white rounded-2xl shadow-2xl p-8 md:p-12 border-2 border-purple-200">
+                <div className="text-center">
+                  <div className="inline-flex items-center justify-center w-20 h-20 bg-gradient-to-br from-purple-500 to-purple-700 rounded-full mb-6">
+                    <LockClosedIcon className="h-10 w-10 text-white" />
+                  </div>
+                  <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Premium Content</h2>
+                  <p className="text-lg text-gray-600 mb-8">Upgrade to premium to access Law Firm Internships and career opportunities</p>
+                  <div className="bg-gradient-to-r from-purple-50 to-blue-50 rounded-xl p-6 mb-8">
+                    <h3 className="text-xl font-semibold text-gray-900 mb-4 flex items-center justify-center gap-2">
+                      <SparklesIcon className="h-6 w-6 text-purple-600" />
+                      Premium Benefits
+                    </h3>
+                    <ul className="text-left space-y-3 max-w-md mx-auto">
+                      <li className="flex items-start gap-3">
+                        <svg className="h-6 w-6 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        <span className="text-gray-700">Access to all law firm content</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <svg className="h-6 w-6 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        <span className="text-gray-700">Search and connect with advocates</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <svg className="h-6 w-6 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        <span className="text-gray-700">Read full articles without restrictions</span>
+                      </li>
+                      <li className="flex items-start gap-3">
+                        <svg className="h-6 w-6 text-green-500 flex-shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" /></svg>
+                        <span className="text-gray-700">View team member profiles</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div className="space-y-4">
+                    {isAuthenticated ? (
+                      <button onClick={() => setShowPremiumModal(true)} className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        <SparklesIcon className="h-5 w-5" />
+                        Upgrade to Premium
+                      </button>
+                    ) : (
+                      <button onClick={() => router.push('/auth?returnTo=' + router.asPath)} className="w-full inline-flex items-center justify-center gap-2 px-8 py-4 bg-gradient-to-r from-purple-600 to-purple-700 text-white font-semibold rounded-lg hover:from-purple-700 hover:to-purple-800 transition-all duration-200 shadow-lg hover:shadow-xl transform hover:scale-105">
+                        Sign In to Continue
+                      </button>
+                    )}
+                  </div>
+                  <p className="mt-6 text-sm text-gray-500">Starting from ₹199/month • Cancel anytime</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          {showPremiumModal && <PremiumModal isOpen={showPremiumModal} onClose={() => setShowPremiumModal(false)} />}
+        </Layout>
+      </>
+    );
+  }
+
   return (
     <Layout title="Law Firm Internships | Indian Advocate Forum">
       <Head>
@@ -271,6 +348,48 @@ const LawFirmInternships: React.FC = () => {
   );
 };
 
+export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
+  let isPremium = false;
+  let isAuthenticated = false;
 
+  try {
+    const session = await getSession(req, res);
+    
+    if (session?.user) {
+      isAuthenticated = true;
+
+      const timeoutPromise = new Promise((_, reject) => {
+        setTimeout(() => reject(new Error('Database operation timeout')), 3000);
+      });
+
+      const userPromise = prisma.user.findUnique({
+        where: { auth0Id: session.user.sub },
+        select: {
+          isPremium: true,
+          premiumExpiresAt: true,
+        },
+      });
+
+      try {
+        const user = await Promise.race([userPromise, timeoutPromise]) as any;
+        
+        if (user) {
+          isPremium = user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date());
+        }
+      } catch (error) {
+        console.error('Error checking premium status:', error);
+      }
+    }
+  } catch (sessionError) {
+    console.error('Session error:', sessionError);
+  }
+
+  return {
+    props: {
+      isPremium,
+      isAuthenticated,
+    },
+  };
+};
 
 export default LawFirmInternships;

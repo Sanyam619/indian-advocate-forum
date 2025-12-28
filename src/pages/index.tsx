@@ -5,7 +5,8 @@ export default function Index() {
   const router = useRouter();
 
   useEffect(() => {
-    router.push('/landing');
+    const showAuth = router.query.showAuth;
+    router.push(showAuth ? '/landing?showAuth=true' : '/landing');
   }, [router]);
 
   return (

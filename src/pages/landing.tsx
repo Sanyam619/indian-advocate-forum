@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import Head from 'next/head';
 import Link from 'next/link';
 import { GetServerSideProps } from 'next';
+import { useRouter } from 'next/router';
 import Layout from '@/components/Layout';
 import prisma from '@/lib/prisma';
 import { NewspaperIcon, ScaleIcon, BuildingLibraryIcon } from '@heroicons/react/24/outline';

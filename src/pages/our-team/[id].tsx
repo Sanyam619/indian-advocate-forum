@@ -100,7 +100,7 @@ export default function TeamMemberProfilePage() {
   }
 
   return (
-    <>
+    <Layout>
       <Head>
         <title>{member.name} - Indian Advocate Forum Team</title>
         <meta 
@@ -108,8 +108,6 @@ export default function TeamMemberProfilePage() {
           content={`Profile of ${member.name}, ${member.references || 'Member'} at Indian Advocate Forum`} 
         />
       </Head>
-
-      <Layout>
         <div className="min-h-screen bg-gradient-to-br from-gray-50 via-purple-50/30 to-indigo-50/30">
           {/* Hero Section */}
           <div className={`${member.role === 'President' 
@@ -297,6 +295,5 @@ export default function TeamMemberProfilePage() {
           </div>
         </div>
       </Layout>
-    </>
   );
 }
