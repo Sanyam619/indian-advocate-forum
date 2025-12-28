@@ -39,8 +39,13 @@ function App({ Component, pageProps }: AppProps) {
         console.log('✅ routeChangeComplete:', url);
       }
     };
-    const handleError = (err: unknown, url: string) => {
-      console.error('❌ routeChangeError:', url, err);
+    const handleError = (err: any, url: string) => {
+      // Ignore cancelled route changes (this is normal when navigating quickly)
+      if (err?.cancelled) return;
+      
+      if (process.env.NODE_ENV === 'development') {
+        console.error('❌ routeChangeError:', url, err);
+      }
     };
 
     router.events.on('routeChangeStart', handleStart);
