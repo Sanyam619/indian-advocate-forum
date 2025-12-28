@@ -584,7 +584,7 @@ export default function Signup() {
               <p className="text-center text-sm text-gray-600">
                 Already have an account?{' '}
                 <button 
-                  onClick={() => router.push('/?showAuth=true')}
+                  onClick={() => setShowAuthModal(true)}
                   className="font-medium text-purple-600 hover:text-purple-500"
                 >
                   Sign in

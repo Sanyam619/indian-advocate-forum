@@ -1,22 +1,12 @@
 import { useRouter } from 'next/router';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
 export default function Index() {
   const router = useRouter();
-  const [hasRedirected, setHasRedirected] = useState(false);
 
   useEffect(() => {
-    // Only redirect once and when router is ready
-    if (!router.isReady || hasRedirected) return;
-    
-    setHasRedirected(true);
-    const showAuth = router.query.showAuth;
-    if (showAuth === 'true') {
-      router.replace('/landing?showAuth=true');
-    } else {
-      router.replace('/landing');
-    }
-  }, [router.isReady, router.query.showAuth, hasRedirected]);
+    router.push('/landing');
+  }, []);
 
   return (
     <div className="min-h-screen flex items-center justify-center">
