@@ -53,9 +53,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
       router.replace({
         pathname: router.pathname,
         query: restQuery
-      }, undefined, { shallow: true });
+      }, undefined, { shallow: true }).catch((e) => {
+        // Ignore errors during navigation (e.g., if user navigates away quickly)
+        if (e?.cancelled) return;
+        console.error('Error replacing route:', e);
+      });
     }
-  }, [router.query.showAuth]);
+  }, [router]);
 
   // Debug log for profile photo
   useEffect(() => {
