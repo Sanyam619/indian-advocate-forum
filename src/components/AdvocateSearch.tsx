@@ -128,11 +128,15 @@ interface Advocate {
 
 interface AdvocateSearchProps {
   onSearch?: (city: string, results: Advocate[]) => void;
+  onViewProfile?: (advocateId: string) => void;
+  onEmailAdvocate?: (email: string, name: string) => boolean;
+  isPremium?: boolean;
 }
 
-const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch }) => {
+const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch, onViewProfile, onEmailAdvocate, isPremium = true }) => {
   const router = useRouter();
   const [city, setCity] = useState('');
+  const [searchedCity, setSearchedCity] = useState('');
   const [advocates, setAdvocates] = useState<Advocate[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -147,6 +151,7 @@ const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch }) => {
     setLoading(true);
     setError(null);
     setSearched(true);
+    setSearchedCity(city.trim());
 
     try {
       const response = await fetch(`/api/advocates/search?city=${encodeURIComponent(city.trim())}`);
@@ -179,6 +184,11 @@ const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch }) => {
   };
 
   const handleEmail = (email: string, advocateName: string) => {
+    // Check if onEmailAdvocate handler exists and if premium check passes
+    if (onEmailAdvocate && !onEmailAdvocate(email, advocateName)) {
+      return; // Don't proceed if premium modal was shown
+    }
+
     const subject = encodeURIComponent('Legal Consultation Inquiry from Indian Advocate Forum');
     const body = encodeURIComponent(`Dear ${advocateName},
 
@@ -200,7 +210,11 @@ Thank you,
   };
 
   const handleViewProfile = (advocateId: string) => {
-    router.push(`/advocates/${advocateId}`);
+    if (onViewProfile) {
+      onViewProfile(advocateId);
+    } else {
+      router.push(`/advocates/${advocateId}`);
+    }
   };
 
   const popularCities = ['Mumbai', 'Delhi', 'Bangalore', 'Chennai', 'Kolkata', 'Pune', 'Hyderabad', 'Ahmedabad'];
@@ -276,12 +290,12 @@ Thank you,
       {searched && (
         <div className="mb-6">
           <h2 className="text-xl font-semibold text-gray-900 mb-4">
-            {loading ? 'Searching...' : `Found ${advocates.length} advocate${advocates.length !== 1 ? 's' : ''} in ${city}`}
+            {loading ? 'Searching...' : `Found ${advocates.length} advocate${advocates.length !== 1 ? 's' : ''} in ${searchedCity}`}
           </h2>
 
           {advocates.length === 0 && !loading && (
             <div className="bg-yellow-50 border border-yellow-200 text-yellow-800 px-4 py-3 rounded-md">
-              No advocates found in {city}. Try searching for a nearby city or check the spelling.
+              No advocates found in {searchedCity}. Try searching for a nearby city or check the spelling.
             </div>
           )}
 
@@ -294,7 +308,7 @@ Thank you,
                   city={city}
                   onCall={handleCall}
                   onEmail={handleEmail}
-                  onView={(id) => router.push(`/advocates/${id}`)}
+                  onView={handleViewProfile}
                 />
               ))}
             </div>
