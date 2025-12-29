@@ -4,8 +4,8 @@ import Image from 'next/image';
 import { useRouter } from 'next/router';
 import dynamic from 'next/dynamic';
 import { useUser } from '@auth0/nextjs-auth0/client';
-import AuthModal from './auth/AuthModal';
 import PremiumModal from './PremiumModal';
+import ProfileSetupModal from './ProfileSetupModal';
 import { useUserProfile } from '../hooks/useUserProfile';
 import NewsTicker from './NewsTicker';
 import Footer from './Footer';
@@ -32,8 +32,8 @@ interface LayoutProps {
 const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Forum" }) => {
   const router = useRouter();
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
-  const [showAuthModal, setShowAuthModal] = useState(false);
   const [showPremiumModal, setShowPremiumModal] = useState(false);
+  const [showProfileSetup, setShowProfileSetup] = useState(false);
   const [imageLoadError, setImageLoadError] = useState(false);
   const profileMenuRef = useRef<HTMLDivElement>(null);
   const profileButtonRef = useRef<HTMLButtonElement>(null);
@@ -43,6 +43,13 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
 
   // Get user profile photo from the custom hook, fallback to Auth0 picture
   const userProfilePhoto = profileData?.profilePhoto || user?.picture;
+
+  // Check if user needs to complete profile setup
+  useEffect(() => {
+    if (user && profileData && !profileData.isProfileSetup) {
+      setShowProfileSetup(true);
+    }
+  }, [user, profileData]);
 
   // Debug log for profile photo
   useEffect(() => {
@@ -372,7 +379,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
                     Subscribe Premium
                   </button>
                   <button
-                    onClick={() => setShowAuthModal(true)}
+                    onClick={() => window.location.href = '/api/auth/login'}
                     className="inline-flex items-center px-6 py-2 border border-transparent text-sm font-semibold rounded-lg text-white bg-purple-600 hover:bg-purple-700 focus:outline-none focus:ring-2 focus:ring-purple-500 transition-colors duration-200"
                   >
                     Sign In
@@ -1223,16 +1230,22 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
         'default'
       } />
 
-      {/* Auth Modal */}
-      {showAuthModal && (
-        <AuthModal onClose={() => setShowAuthModal(false)} />
-      )}
-
       {/* Premium Modal */}
       {showPremiumModal && (
         <PremiumModal 
           isOpen={showPremiumModal} 
           onClose={() => setShowPremiumModal(false)} 
+        />
+      )}
+
+      {/* Profile Setup Modal */}
+      {showProfileSetup && user?.email && (
+        <ProfileSetupModal 
+          userEmail={user.email}
+          onComplete={() => {
+            setShowProfileSetup(false);
+            window.location.reload(); // Refresh to update profile data
+          }}
         />
       )}
     </div>

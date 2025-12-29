@@ -1,4 +1,4 @@
-import { handleAuth, handleCallback } from '@auth0/nextjs-auth0';
+import { handleAuth, handleCallback, handleLogin } from '@auth0/nextjs-auth0';
 import type { NextApiRequest, NextApiResponse } from 'next';
 import prisma from '../../../lib/prisma';
 import { getSession } from '@auth0/nextjs-auth0';
@@ -10,6 +10,19 @@ if (!process.env.DATABASE_URL) {
 }
 
 export default handleAuth({
+  async login(req: NextApiRequest, res: NextApiResponse) {
+    try {
+      await handleLogin(req, res, {
+        authorizationParams: {
+          screen_hint: 'login',
+          prompt: 'login'
+        }
+      });
+    } catch (error) {
+      console.error('Login error:', error);
+      res.status((error as any)?.status || 500).end((error as Error)?.message);
+    }
+  },
   async callback(req: NextApiRequest, res: NextApiResponse) {
     try {
       // Debug environment variables
