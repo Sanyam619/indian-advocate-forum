@@ -46,35 +46,63 @@ export default handleAuth({
               setTimeout(() => reject(new Error('Database operation timeout')), 3000);
             });
 
-            // Check if this is a new user
-            const userPromise = prisma.user.findUnique({
+            // Validate email format
+            const email = session.user.email || '';
+            const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            if (!emailRegex.test(email)) {
+              throw new Error('Invalid email address');
+            }
+
+            // Check if user exists by auth0Id first
+            const userByAuth0IdPromise = prisma.user.findUnique({
               where: { auth0Id: session.user.sub }
             });
 
-            const existingUser = await Promise.race([userPromise, timeoutPromise]) as any;
+            let existingUser = await Promise.race([userByAuth0IdPromise, timeoutPromise]) as any;
 
             if (!existingUser) {
-              // Try to create a new user (social login users)
-              const createUserPromise = prisma.user.create({
-                data: {
-                  auth0Id: session.user.sub,
-                  email: session.user.email || '',
-                  fullName: session.user.name || '',
-                  profilePhoto: session.user.picture || '',
-                  role: 'USER',
-                  isProfileSetup: false  // Will need to complete profile setup
-                }
+              // Check if user exists with same email (different OAuth provider)
+              const userByEmailPromise = prisma.user.findUnique({
+                where: { email: email }
               });
 
-              await Promise.race([createUserPromise, timeoutPromise]);
+              const userWithSameEmail = await Promise.race([userByEmailPromise, timeoutPromise]) as any;
 
-              return {
-                ...session,
-                user: {
-                  ...session.user,
-                  isProfileSetup: false
-                }
-              };
+              if (userWithSameEmail) {
+                // Link this auth0Id to existing account
+                const updateUserPromise = prisma.user.update({
+                  where: { email: email },
+                  data: {
+                    auth0Id: session.user.sub,
+                    // Update profile photo if it's better quality
+                    profilePhoto: session.user.picture || userWithSameEmail.profilePhoto,
+                  }
+                });
+
+                existingUser = await Promise.race([updateUserPromise, timeoutPromise]) as any;
+              } else {
+                // Create new user
+                const createUserPromise = prisma.user.create({
+                  data: {
+                    auth0Id: session.user.sub,
+                    email: email,
+                    fullName: session.user.name || '',
+                    profilePhoto: session.user.picture || '',
+                    role: 'USER',
+                    isProfileSetup: false  // Will need to complete profile setup
+                  }
+                });
+
+                existingUser = await Promise.race([createUserPromise, timeoutPromise]);
+
+                return {
+                  ...session,
+                  user: {
+                    ...session.user,
+                    isProfileSetup: false
+                  }
+                };
+              }
             }
 
             return {
