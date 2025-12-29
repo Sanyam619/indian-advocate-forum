@@ -329,7 +329,7 @@ const Layout: React.FC<LayoutProps> = ({ children, title = "Indian Advocate Foru
                       </svg>
                       Premium
                     </Link>
-                  ) : (
+                  ) : profileData?.role !== 'ADMIN' && (
                     <button
                       onClick={() => setShowPremiumModal(true)}
                       className="hidden lg:inline-flex items-center px-5 py-2 border-2 border-purple-600 text-sm font-semibold rounded-lg text-purple-600 bg-white hover:bg-purple-50 transition-colors duration-200"
