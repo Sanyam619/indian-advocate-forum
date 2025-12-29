@@ -456,6 +456,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         select: {
           isPremium: true,
           premiumExpiresAt: true,
+          role: true,
         },
       });
 
@@ -463,8 +464,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         const user = await Promise.race([userPromise, timeoutPromise]) as any;
         
         if (user) {
-          // Check if premium is active and not expired
-          isPremium = user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date());
+          // Admins get free access to everything
+          isPremium = user.role === 'ADMIN' || (user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date()));
         }
       } catch (error) {
         console.error('Error checking premium status:', error);

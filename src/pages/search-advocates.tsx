@@ -104,6 +104,7 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
         isPremium: true,
         premiumExpiresAt: true,
         email: true,
+        role: true,
       },
     });
 
@@ -119,8 +120,8 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
       };
     }
 
-    // Check if premium is active and not expired
-    const isPremiumActive = user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date());
+    // Check if premium is active and not expired, or if user is admin
+    const isPremiumActive = user.role === 'ADMIN' || (user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date()));
 
     return {
       props: {
