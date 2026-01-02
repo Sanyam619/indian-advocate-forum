@@ -6,6 +6,24 @@ import { useRouter } from 'next/router';
 const AdvocateCard: React.FC<{ advocate: any; city: string; onCall: (phone: string) => void; onEmail: (email: string, name: string) => void; onView: (id: string) => void }> = ({ advocate, city, onCall, onEmail, onView }) => {
   const [rotateX, setRotateX] = useState(0);
   const [rotateY, setRotateY] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    // Detect if user is on a mobile device
+    const checkMobile = () => {
+      const isMobileDevice = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+      const isMobileScreen = window.innerWidth <= 768;
+      setIsMobile(isMobileDevice || isMobileScreen);
+    };
+    
+    checkMobile();
+    
+    // Add resize listener to update when screen size changes
+    window.addEventListener('resize', checkMobile);
+    
+    // Cleanup listener on unmount
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     const card = e.currentTarget;
@@ -86,7 +104,7 @@ const AdvocateCard: React.FC<{ advocate: any; city: string; onCall: (phone: stri
         </p>
       </div>
       <div className="flex gap-2">
-        {advocate.phoneNumber && (
+        {advocate.phoneNumber && isMobile && (
           <button
             onClick={() => onCall(advocate.phoneNumber)}
             className="flex-1 flex items-center justify-center gap-2 px-3 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition-colors text-sm"
