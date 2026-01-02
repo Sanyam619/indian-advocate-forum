@@ -141,9 +141,41 @@ const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch, onViewProfile
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [searched, setSearched] = useState(false);
+  const [featuredAdvocates, setFeaturedAdvocates] = useState<Advocate[]>([]);
 
-  const handleSearch = async () => {
-    if (!city.trim()) {
+  // Load featured advocates on mount
+  useEffect(() => {
+    const loadFeaturedAdvocates = async () => {
+      try {
+        const response = await fetch('/api/advocates/featured');
+        const data = await response.json();
+
+        if (data.success && data.advocates.length > 0) {
+          setFeaturedAdvocates(data.advocates);
+        }
+      } catch (err) {
+        console.error('Error loading featured advocates:', err);
+      }
+    };
+
+    loadFeaturedAdvocates();
+  }, []);
+
+  // Load city from URL params and search on mount
+  useEffect(() => {
+    // Wait for router to be ready to ensure query params are loaded
+    if (!router.isReady) return;
+    
+    const cityParam = router.query.city as string;
+    if (cityParam && cityParam.trim()) {
+      setCity(cityParam);
+      // Perform search automatically
+      performSearch(cityParam);
+    }
+  }, [router.isReady, router.query.city]);
+
+  const performSearch = async (searchCity: string) => {
+    if (!searchCity.trim()) {
       setError('Please enter a city name');
       return;
     }
@@ -151,15 +183,15 @@ const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch, onViewProfile
     setLoading(true);
     setError(null);
     setSearched(true);
-    setSearchedCity(city.trim());
+    setSearchedCity(searchCity.trim());
 
     try {
-      const response = await fetch(`/api/advocates/search?city=${encodeURIComponent(city.trim())}`);
+      const response = await fetch(`/api/advocates/search?city=${encodeURIComponent(searchCity.trim())}`);
       const data = await response.json();
 
       if (data.success) {
         setAdvocates(data.advocates);
-        onSearch?.(city, data.advocates);
+        onSearch?.(searchCity, data.advocates);
       } else {
         setError(data.message || 'Failed to search advocates');
       }
@@ -169,6 +201,10 @@ const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch, onViewProfile
     } finally {
       setLoading(false);
     }
+  };
+
+  const handleSearch = async () => {
+    performSearch(city);
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -213,7 +249,8 @@ Thank you,
     if (onViewProfile) {
       onViewProfile(advocateId);
     } else {
-      router.push(`/advocates/${advocateId}`);
+      // Preserve city in URL when navigating to advocate details
+      router.push(`/advocates/${advocateId}?from=search&city=${encodeURIComponent(searchedCity || city)}`);
     }
   };
 
@@ -313,6 +350,36 @@ Thank you,
               ))}
             </div>
           )}
+        </div>
+      )}
+
+      {/* Featured Advocates - Always visible, persistent section */}
+      {featuredAdvocates.length > 0 && (
+        <div className="mb-8">
+          <div className="mb-6">
+            <h2 className="text-2xl font-bold text-gray-900">
+              Trusted Senior Legal Experts
+            </h2>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {featuredAdvocates.map((advocate) => (
+              <AdvocateCard
+                key={advocate.id}
+                advocate={advocate}
+                city={advocate.city}
+                onCall={handleCall}
+                onEmail={handleEmail}
+                onView={handleViewProfile}
+              />
+            ))}
+          </div>
+
+          <div className="mt-6 text-center">
+            <p className="text-sm text-gray-600">
+              💡 <span className="font-medium">Use the search feature above to explore more advocates in your specific location</span>
+            </p>
+          </div>
         </div>
       )}
     </div>

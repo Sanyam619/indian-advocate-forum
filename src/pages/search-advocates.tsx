@@ -24,8 +24,13 @@ const SearchAdvocatesPage: React.FC<SearchAdvocatesPageProps> = ({ isPremium, us
 
   const handleViewProfile = (advocateId: string) => {
     if (isPremium) {
-      // Premium users can view profiles
-      router.push(`/advocates/${advocateId}`);
+      // Premium users can view profiles - preserve city parameter
+      const city = router.query.city as string;
+      if (city) {
+        router.push(`/advocates/${advocateId}?city=${encodeURIComponent(city)}`);
+      } else {
+        router.push(`/advocates/${advocateId}`);
+      }
     } else {
       // Non-premium users see the modal
       setShowPremiumModal(true);
