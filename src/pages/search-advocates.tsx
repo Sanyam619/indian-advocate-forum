@@ -1,21 +1,17 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { GetServerSideProps } from 'next';
 import { getSession } from '@auth0/nextjs-auth0';
 import Layout from '@/components/Layout';
 import AdvocateSearch from '@/components/AdvocateSearch';
-import PremiumModal from '@/components/PremiumModal';
-import { SparklesIcon, LockClosedIcon } from '@heroicons/react/24/outline';
 
 interface SearchAdvocatesPageProps {
-  isPremium: boolean;
   userEmail: string | null;
 }
 
-const SearchAdvocatesPage: React.FC<SearchAdvocatesPageProps> = ({ isPremium, userEmail }) => {
+const SearchAdvocatesPage: React.FC<SearchAdvocatesPageProps> = ({ userEmail }) => {
   const router = useRouter();
-  const [showPremiumModal, setShowPremiumModal] = useState(false);
 
   const handleSearchResults = (city: string, advocates: any[]) => {
     // Optional: Update URL with search parameters
@@ -23,30 +19,18 @@ const SearchAdvocatesPage: React.FC<SearchAdvocatesPageProps> = ({ isPremium, us
   };
 
   const handleViewProfile = (advocateId: string) => {
-    if (isPremium) {
-      // Premium users can view profiles - preserve city parameter
-      const city = router.query.city as string;
-      if (city) {
-        router.push(`/advocates/${advocateId}?city=${encodeURIComponent(city)}`);
-      } else {
-        router.push(`/advocates/${advocateId}`);
-      }
+    // All users can view profiles - preserve city parameter
+    const city = router.query.city as string;
+    if (city) {
+      router.push(`/advocates/${advocateId}?city=${encodeURIComponent(city)}`);
     } else {
-      // Non-premium users see the modal
-      setShowPremiumModal(true);
+      router.push(`/advocates/${advocateId}`);
     }
   };
 
   const handleEmailAdvocate = (email: string, name: string) => {
-    if (isPremium) {
-      // Premium users can email advocates
-      // This will be handled by AdvocateSearch component
-      return true;
-    } else {
-      // Non-premium users see the modal
-      setShowPremiumModal(true);
-      return false;
-    }
+    // All users can email advocates
+    return true;
   };
 
   return (
@@ -66,17 +50,9 @@ const SearchAdvocatesPage: React.FC<SearchAdvocatesPageProps> = ({ isPremium, us
             onSearch={handleSearchResults}
             onViewProfile={handleViewProfile}
             onEmailAdvocate={handleEmailAdvocate}
-            isPremium={isPremium}
           />
         </div>
       </Layout>
-
-      {showPremiumModal && (
-        <PremiumModal
-          isOpen={showPremiumModal}
-          onClose={() => setShowPremiumModal(false)}
-        />
-      )}
     </>
   );
 };
@@ -85,61 +61,15 @@ export const getServerSideProps: GetServerSideProps = async ({ req, res }) => {
   try {
     const session = await getSession(req, res);
     
-    if (!session?.user) {
-      // Not logged in - allow search but mark as non-premium
-      return {
-        props: {
-          isPremium: false,
-          userEmail: null,
-        },
-      };
-    }
-
-    // Import Prisma dynamically
-    const prisma = (await import('@/lib/prisma')).default;
-
-    // Check user's premium status
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error('Database operation timeout')), 3000);
-    });
-
-    const userPromise = prisma.user.findUnique({
-      where: { auth0Id: session.user.sub },
-      select: {
-        isPremium: true,
-        premiumExpiresAt: true,
-        email: true,
-        role: true,
-      },
-    });
-
-    const user = await Promise.race([userPromise, timeoutPromise]) as any;
-
-    if (!user) {
-      // User not found in database - allow but show as non-premium
-      return {
-        props: {
-          isPremium: false,
-          userEmail: session.user.email || null,
-        },
-      };
-    }
-
-    // Check if premium is active and not expired, or if user is admin
-    const isPremiumActive = user.role === 'ADMIN' || (user.isPremium && (!user.premiumExpiresAt || new Date(user.premiumExpiresAt) > new Date()));
-
     return {
       props: {
-        isPremium: isPremiumActive,
-        userEmail: user.email || null,
+        userEmail: session?.user?.email || null,
       },
     };
   } catch (error) {
-    console.error('Error checking premium status:', error);
-    // On error, allow access but show as non-premium
+    console.error('Error in getServerSideProps:', error);
     return {
       props: {
-        isPremium: false,
         userEmail: null,
       },
     };

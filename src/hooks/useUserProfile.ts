@@ -8,9 +8,6 @@ interface UserProfileData {
   role?: string;
   isVerified?: boolean;
   isProfileSetup?: boolean;
-  isPremium?: boolean;
-  premiumPlan?: string;
-  premiumExpiresAt?: string;
 }
 
 export const useUserProfile = () => {

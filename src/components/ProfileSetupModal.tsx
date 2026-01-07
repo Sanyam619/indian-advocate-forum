@@ -498,7 +498,7 @@ export default function ProfileSetupModal({ userEmail, onComplete }: ProfileSetu
                 </p>
                 <p className="text-xs text-gray-600 mt-1">
                   {formData.isAdvocate 
-                    ? 'Advocate membership with premium features' 
+                    ? 'Advocate membership with full features' 
                     : 'Basic user access to legal services'}
                 </p>
               </div>

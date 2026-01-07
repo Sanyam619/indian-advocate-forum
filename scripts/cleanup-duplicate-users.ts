@@ -50,11 +50,6 @@ async function cleanupDuplicateUsers() {
           return a.isProfileSetup ? -1 : 1;
         }
         
-        // Prioritize premium accounts
-        if (a.isPremium !== b.isPremium) {
-          return a.isPremium ? -1 : 1;
-        }
-        
         // Prioritize older accounts
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       });
@@ -68,7 +63,6 @@ async function cleanupDuplicateUsers() {
       console.log(`    Name: ${keepUser.fullName}`);
       console.log(`    Role: ${keepUser.role}`);
       console.log(`    Profile Setup: ${keepUser.isProfileSetup}`);
-      console.log(`    Premium: ${keepUser.isPremium}`);
       console.log(`    Created: ${keepUser.createdAt}`);
 
       console.log(`\n  Deleting ${deleteUsers.length} duplicate account(s):`);

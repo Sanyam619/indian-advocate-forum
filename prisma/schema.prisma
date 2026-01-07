@@ -39,12 +39,6 @@ model User {
   paymentStatus       String?   // "pending", "completed", "failed"
   stripePaymentIntentId String?
   
-  // Premium subscription
-  isPremium           Boolean   @default(false)
-  premiumPlan         String?   // "monthly", "6months", "yearly", "3years"
-  premiumExpiresAt    DateTime?
-  stripeSubscriptionId String?
-  
   createdAt           DateTime  @default(now())
   updatedAt           DateTime  @updatedAt
   news                News[]

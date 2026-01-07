@@ -148,10 +148,9 @@ interface AdvocateSearchProps {
   onSearch?: (city: string, results: Advocate[]) => void;
   onViewProfile?: (advocateId: string) => void;
   onEmailAdvocate?: (email: string, name: string) => boolean;
-  isPremium?: boolean;
 }
 
-const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch, onViewProfile, onEmailAdvocate, isPremium = true }) => {
+const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch, onViewProfile, onEmailAdvocate }) => {
   const router = useRouter();
   const [city, setCity] = useState('');
   const [searchedCity, setSearchedCity] = useState('');
@@ -238,9 +237,9 @@ const AdvocateSearch: React.FC<AdvocateSearchProps> = ({ onSearch, onViewProfile
   };
 
   const handleEmail = (email: string, advocateName: string) => {
-    // Check if onEmailAdvocate handler exists and if premium check passes
+    // Check if onEmailAdvocate handler exists
     if (onEmailAdvocate && !onEmailAdvocate(email, advocateName)) {
-      return; // Don't proceed if premium modal was shown
+      return;
     }
 
     const subject = encodeURIComponent('Legal Consultation Inquiry from Indian Advocate Forum');

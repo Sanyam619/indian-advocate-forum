@@ -42,10 +42,6 @@ export const AuthProvider = ({ children }: { children: ReactNode }) => {
     specialization: [],
     paymentStatus: null,
     stripePaymentIntentId: null,
-    isPremium: false,
-    premiumPlan: null,
-    premiumExpiresAt: null,
-    stripeSubscriptionId: null,
     createdAt: new Date(),
     updatedAt: new Date(),
   } as User : null;

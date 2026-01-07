@@ -54,11 +54,6 @@ export default async function handler(
           specialization: specialization || [],
           languages: languages || [],
         }),
-        // If payment was made, mark as premium
-        ...(paymentIntentId && paymentIntentId !== 'test_skip_payment' && {
-          isPremium: true,
-          premiumExpiresAt: new Date(Date.now() + 365 * 24 * 60 * 60 * 1000), // 1 year
-        }),
       },
     });
 
